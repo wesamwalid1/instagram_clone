@@ -19,6 +19,9 @@ class CustomTextForm extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(color: Colors.black, width: 2.0.w)),
+        errorBorder:OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.red, width: 2.0.w)) ,
         hintText: hint,
         fillColor: const Color.fromRGBO(217, 217, 217, 1),
         filled: true,
