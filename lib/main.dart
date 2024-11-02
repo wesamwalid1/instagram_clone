@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:instagramclone/homeScreen.dart';
-import 'package:instagramclone/test.dart';
-import 'features/auth-feature/view-model/logic/auth-cubit/auth_cubit.dart';
-import 'features/auth-feature/view/screens/login.dart';
-import 'features/auth-feature/view/screens/register.dart';
+import 'package:instagramclone/presentation/screens/home-screens/home-screen.dart';
+import 'package:instagramclone/shared/bottom-navigation-bar.dart';
+import 'logic/auth-cubit/auth_cubit.dart';
+import 'presentation/screens/auth-screens/login-screen.dart';
+import 'presentation/screens/auth-screens/register-screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -34,14 +34,14 @@ class MyApp extends StatelessWidget {
           builder: (_, child) {
             return MaterialApp(
               debugShowCheckedModeBanner: false,
+              home:  BottomTabs(),
               //home: const homeScreen(),
-              initialRoute: "home",
-              routes: {
-                "login": (context) => const loginScreen(),
-                "register": (context) => const registerScreen(),
-                "home": (context) =>  homeScreen(),
-                "test": (context) =>  test()
-              },
+              // initialRoute: "home",
+              // routes: {
+              //   "login": (context) => const LoginScreen(),
+              //   "register": (context) => const RegisterScreen(),
+              //   "home": (context) =>  HomeScreen(),
+              // },
             );
           },
         ));
