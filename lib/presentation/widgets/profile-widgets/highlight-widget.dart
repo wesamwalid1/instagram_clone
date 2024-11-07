@@ -12,7 +12,7 @@ class _highlightsState extends State<highlights> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 86.h,
+      height: 80.h,
       width: 390.w,
       child: ListView.builder(
           itemCount: 10,

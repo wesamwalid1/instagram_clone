@@ -47,10 +47,15 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
               SizedBox(
                 width: 15.w,
               ),
-              Image.asset(
-                "assets/images/add_icon.png",
-                width: 30,
-                height: 30,
+              GestureDetector(
+                onTap: (){
+                  Navigator.pushNamed(context, "add_post");
+                },
+                child: Image.asset(
+                  "assets/images/add_icon.png",
+                  width: 30,
+                  height: 30,
+                ),
               ),
             ],
           ),

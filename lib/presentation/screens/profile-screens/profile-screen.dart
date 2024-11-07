@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:instagramclone/presentation/widgets/profile-widgets/app-bar-widget.dart';
 import 'package:instagramclone/presentation/widgets/profile-widgets/user-info-widget.dart';
-
 import '../../widgets/profile-widgets/edit-profile-widget.dart';
 import '../../widgets/profile-widgets/highlight-widget.dart';
+import '../../widgets/profile-widgets/tab-bar-widget.dart';
+
 import '../../widgets/profile-widgets/user-profile-data-widget.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,14 +26,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomAppBarProfilePage(),
+               const CustomAppBarProfilePage(),
               SizedBox(height: 10.h,),
-              const UserProfileData(),
+               const UserProfileData(),
               SizedBox(height: 10.h,),
-              const UserInfo(),
-              const EditProfile(),
+               const UserInfo(),
+               const EditProfile(),
               SizedBox(height: 20.h,),
-              const highlights()
+               const highlights(),
+               SizedBox(height:500.h,child: const TabBarProfilePage())
             ],
           ),
         ),

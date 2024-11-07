@@ -79,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(10.r)),
                             backgroundColor: const Color.fromRGBO(0, 163, 255, 1 ),
                             minimumSize: Size(400.w,45.h),
                           ),
@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     }, listener: (context,state){
           if(state is AuthSuccess){
-            Navigator.pushReplacementNamed(context, "home");
+            Navigator.pushReplacementNamed(context, "main_screen");
           }else if (state is AuthFailure){
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error)),

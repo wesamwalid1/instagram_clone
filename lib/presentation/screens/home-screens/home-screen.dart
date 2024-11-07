@@ -16,9 +16,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.only(top: 60,left: 10,right: 10),
             child: const CustomAppBarHomePage(),
           ),
-
            SizedBox(height: 20.h,),
-
           const CustomStoriesListView(),
            CustomPostsListView(),
         ],
