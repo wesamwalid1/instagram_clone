@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../logic/auth-cubit/auth_cubit.dart';
+
 class UserInfo extends StatefulWidget {
   const UserInfo({super.key});
 
@@ -9,24 +13,57 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfoState extends State<UserInfo> {
   @override
+  void initState() {
+    super.initState();
+    context.read<AuthCubit>().fetchUserInfo();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300.w,
-      height: 60.h,
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Wesam Walid",
-            style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+    return BlocConsumer<AuthCubit, AuthState>(
+      builder: (context, state) {
+        String? name;
+        String? bio;
+        String? website;
+
+        if (state is AuthSuccess) {
+          name = state.userModel?.name;
+          bio = state.userModel?.bio;
+          website = state.userModel?.website;
+        }
+
+        return SizedBox(
+          width: 300.w,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (name != null && name.isNotEmpty)
+                Text(
+                  name,
+                  style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+                ),
+              if (bio != null && bio.isNotEmpty)
+                Text(
+                  bio,
+                  style: TextStyle(fontSize: 10.sp),
+                ),
+              if (website != null && website.isNotEmpty)
+                Text(
+                  website,
+                  style: TextStyle(fontSize: 10.sp, color: Colors.blue),
+                ),
+            ],
           ),
-          Text(
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt #hashtag",
-            style: TextStyle(fontSize: 13),
-          )
-        ],
-      ),
+        );
+      },
+      listener: (context, state) {
+        if (state is AuthFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        }
+      },
     );
   }
 }

@@ -25,36 +25,36 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
         ),
         const Spacer(),
         SizedBox(
-          height: 24.h,
-          width: 120.w,
+          height: 30.h,
+          width: 150.w,
           child: Row(
             children: [
               SizedBox(
                 width: 25.w,
               ),
-              const Icon(
+               Icon(
                 Icons.favorite_border,
-                size: 30,
+                size: 30.sp,
               ),
               SizedBox(
                 width: 15.w,
               ),
               Image.asset(
                 "assets/images/Messenger_icon.png",
-                width: 30,
-                height: 30,
+                width: 30.w,
+                height: 30.h,
               ),
               SizedBox(
                 width: 15.w,
               ),
               GestureDetector(
                 onTap: (){
-                  Navigator.pushNamed(context, "add_post");
+                  Navigator.pushNamed(context, "add");
                 },
                 child: Image.asset(
                   "assets/images/add_icon.png",
-                  width: 30,
-                  height: 30,
+                  width: 30.w,
+                  height: 30.h,
                 ),
               ),
             ],

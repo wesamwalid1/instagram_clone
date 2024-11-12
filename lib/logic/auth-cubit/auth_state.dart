@@ -41,3 +41,9 @@ final class AuthProfilePhotoUpdateFailure extends AuthState {
 
   AuthProfilePhotoUpdateFailure(this.error);
 }
+final class SignOut extends AuthState{
+}
+
+
+
+

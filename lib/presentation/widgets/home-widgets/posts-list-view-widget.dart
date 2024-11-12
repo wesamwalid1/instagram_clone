@@ -17,7 +17,7 @@ class _CustomPostsListViewState extends State<CustomPostsListView> {
         shrinkWrap: true,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15 ),
+            padding:  EdgeInsets.symmetric(vertical: 10.sp ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -38,17 +38,17 @@ class _CustomPostsListViewState extends State<CustomPostsListView> {
                       SizedBox(
                         width: 4.w,
                       ),
-                      const Text(
+                       Text(
                         "Wesam.Walid1",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 12),
+                            fontWeight: FontWeight.bold, fontSize: 12.sp),
                       ),
                       const Spacer(),
                       IconButton(
                           onPressed: () {},
-                          icon: const Icon(
+                          icon:  Icon(
                             Icons.more_horiz,
-                            size: 24,
+                            size: 24.sp,
                           )),
                     ],
                   ),
@@ -70,17 +70,20 @@ class _CustomPostsListViewState extends State<CustomPostsListView> {
                   padding: const EdgeInsets.only(left: 15, right: 15),
                   child: Row(
                     children: [
-                      const Icon(
+                       Icon(
                         Icons.favorite_border,
-                        size: 30,
+                        size: 30.sp,
                       ),
                       SizedBox(
-                        width: 5.w,
+                        width: 10.w,
                       ),
                       Image.asset(
                         "assets/images/comment.png",
                         width: 24.w,
                         height: 24.h,
+                      ),
+                      SizedBox(
+                        width: 10.w,
                       ),
                       Image.asset(
                         "assets/images/share.png",
@@ -97,11 +100,11 @@ class _CustomPostsListViewState extends State<CustomPostsListView> {
                   ),
                 ),
                 SizedBox(height: 5.h,),
-                const Padding(
-                  padding: EdgeInsets.only(left: 15),
+                 Padding(
+                  padding: EdgeInsets.only(left: 15.w),
                   child: Text(
                     "100 Likes",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13.sp),
                   ),
                 )
               ],

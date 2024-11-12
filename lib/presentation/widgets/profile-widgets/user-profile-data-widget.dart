@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../logic/auth-cubit/auth_cubit.dart';
 
 class UserProfileData extends StatefulWidget {
   const UserProfileData({super.key});
@@ -10,42 +13,62 @@ class UserProfileData extends StatefulWidget {
 
 class _UserProfileDataState extends State<UserProfileData> {
   @override
+  void initState() {
+    super.initState();
+    context.read<AuthCubit>().fetchUserInfo();
+  }
+  @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Container(
-          clipBehavior: Clip.antiAlias,
-          height: 90.h,
-          width: 90.w,
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Image.asset(
-            'assets/images/post.jpeg',
-            fit: BoxFit.fill,
-          ),
-        ),
-        SizedBox(width: 45.w,),
-        const Column(
-          children: [
-            Text("1,234",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
-            Text("posts",style: TextStyle(fontSize: 14),)
-          ],
-        ),
-        SizedBox(width: 45.w,),
-        const Column(
-          children: [
-            Text("5,678",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
-            Text("Followers",style: TextStyle(fontSize: 14),)
-          ],
-        ),
-        SizedBox(width: 45.w,),
-        const Column(
-          children: [
-            Text("9,101",style: TextStyle(fontSize: 14,fontWeight: FontWeight.bold),),
-            Text("Following",style: TextStyle(fontSize: 14),)
-          ],
-        ),
+    return BlocConsumer<AuthCubit,AuthState>(
+        builder: (context,state){
+          String profilePhotoUrl = 'assets/images/default_profile.png';
+          // Check if we have a successful state with user info
+          if (state is AuthSuccess && state.userModel != null) {
+            profilePhotoUrl = (state.userModel!.profilePhoto!.isNotEmpty
+                ? state.userModel!.profilePhoto
+                : profilePhotoUrl)!;
+          }
+          return Row(
+            children: [
+              Container(
+                clipBehavior: Clip.antiAlias,
+                height: 75.79.h,
+                width: 75.79.w,
+                decoration: const BoxDecoration(shape: BoxShape.circle),
+                child:profilePhotoUrl.startsWith('http')
+                    ? Image.network(
+                  profilePhotoUrl,
+                  fit: BoxFit.cover,
+                )
+                    : Image.asset(
+                  profilePhotoUrl,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              SizedBox(width: 30.w,),
+               Column(
+                children: [
+                  Text("1,234",style: TextStyle(fontSize: 12.sp,fontWeight: FontWeight.bold),),
+                  Text("posts",style: TextStyle(fontSize: 12.sp),)
+                ],
+              ),
+              SizedBox(width: 15.w,),
+               Column(
+                children: [
+                  Text("5,678",style: TextStyle(fontSize: 12.sp,fontWeight: FontWeight.bold,),),
+                  Text("Followers",style: TextStyle(fontSize: 12.sp),)
+                ],
+              ),
+              SizedBox(width: 15.w,),
+               Column(
+                children: [
+                  Text("9,101",style: TextStyle(fontSize: 12.sp,fontWeight: FontWeight.bold),),
+                  Text("Following",style: TextStyle(fontSize: 12.sp),)
+                ],
+              ),
 
-      ],
-    );
+            ],
+          );
+        }, listener: (context,state){});
   }
 }

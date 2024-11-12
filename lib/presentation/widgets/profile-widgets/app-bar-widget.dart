@@ -34,18 +34,28 @@ class _CustomAppBarProfilePageState extends State<CustomAppBarProfilePage> {
           children: [
             Text(
               username,
-              style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
             ),
             const Spacer(),
-            Image.asset(
-              "assets/images/add_icon.png",
-              width: 24.w,
-              height: 24.h,
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, "add");
+              },
+              child: Image.asset(
+                "assets/images/add_icon.png",
+                width: 24.w,
+                height: 24.h,
+              ),
             ),
             SizedBox(width: 10.w),
-            const Icon(
-              Icons.menu,
-              size: 30,
+            GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, "settings");
+              },
+              child: const Icon(
+                Icons.menu,
+                size: 30,
+              ),
             ),
           ],
         );

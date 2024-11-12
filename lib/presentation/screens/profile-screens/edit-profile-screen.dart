@@ -54,58 +54,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (state is AuthSuccess || state is AuthProfileUpdateSuccess) {
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              title: const Text("Edit Profile"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // Trigger the updateProfile function when "Done" is pressed
-                    context.read<AuthCubit>().updateProfile(
-                      name: nameController.text,
-                      username: usernameController.text,
-                      bio: bioController.text,
-                      phone: phoneController.text,
-                      gender: genderController.text,
-                      website: websiteController.text,
-                    );
-                  },
-                  child: const Text(
-                    "Done",
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                ),
-              ],
-            ),
             body: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                padding:  EdgeInsets.only(top: 40.h, left: 20.w, right: 20.w),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    CustomAppBarEditProfileScreen(
+                      onDone:(){
+                        context.read<AuthCubit>().updateProfile(
+                          name: nameController.text,
+                          username: usernameController.text,
+                          bio: bioController.text,
+                          phone: phoneController.text,
+                          gender: genderController.text,
+                          website: websiteController.text,
+                        );
+                      },
+                      onCancel: (){
+                        Navigator.pushNamed(context, "profile");
+                      },
+                    ),
+                    SizedBox(height: 15.h,),
                     const ProfilePhotoWidget(),
-                    SizedBox(height: 20.h),
                     CustomTextFieldWidget(
                       controller: nameController,
                       title: "Name",
+                      hint: "Enter Your Name",
                     ),
                     SizedBox(height: 10.h),
                     CustomTextFieldWidget(
                       controller: usernameController,
                       title: "Username",
+                      hint: "Enter Your username",
                     ),
                     SizedBox(height: 10.h),
                     CustomTextFieldWidget(
                       controller: websiteController,
                       title: "Website",
+                      hint: "Enter Your Website",
                     ),
                     CustomTextFieldWidget(
                       controller: bioController,
                       title: "Bio",
+                      hint: "Enter Your Bio",
                     ),
                     SizedBox(height: 15.h),
                     Text(
                       "Switch to Professional Account",
                       style: TextStyle(
-                        fontSize: 15.sp,
+                        fontSize: 12.sp,
                         color: const Color.fromRGBO(56, 151, 240, 1),
                       ),
                     ),
@@ -113,21 +111,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     Text(
                       "Private Information",
                       style: TextStyle(
-                        fontSize: 15.sp,
+                        fontSize: 12.sp,
                         color: const Color.fromRGBO(38, 38, 38, 1),
                       ),
                     ),
+                    SizedBox(height: 10.h),
+
                     CustomTextFieldWidget(
                       controller: emailController,
                       title: "Email",
+                      hint: "Enter Your Email",
                     ),
                     CustomTextFieldWidget(
                       controller: phoneController,
                       title: "Phone",
+                      hint: "Enter Your Phone number",
                     ),
                     CustomTextFieldWidget(
                       controller: genderController,
                       title: "Gender",
+                      hint: "Enter Your Gender",
+
                     ),
                     SizedBox(height: 200.h),
                   ],

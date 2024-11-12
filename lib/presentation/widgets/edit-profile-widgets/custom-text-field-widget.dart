@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomTextFieldWidget extends StatelessWidget {
+class CustomTextFieldWidget extends StatefulWidget {
   final TextEditingController? controller;
   String? title;
+  String? hint;
 
-   CustomTextFieldWidget({super.key, this.controller,required this.title});
+   CustomTextFieldWidget({super.key, this.controller,required this.title,required this.hint});
 
+  @override
+  State<CustomTextFieldWidget> createState() => _CustomTextFieldWidgetState();
+}
+
+class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -15,19 +21,21 @@ class CustomTextFieldWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$title",style: TextStyle(fontSize: 15.sp),),
+          Text("${widget.title}",style: TextStyle(fontSize: 15.sp),),
           Padding(
-            padding: const EdgeInsets.only(right: 40),
+            padding:  EdgeInsets.only(right: 40.w),
             child: SizedBox(
               height: 48.h,
-              width: 225.w,
+              width: 180.w,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextField(
-                  decoration: const InputDecoration(
-                    hintText: 'Enter a search term',
+                  decoration: InputDecoration(
+                    hintText: widget.hint,
+                    hintStyle: TextStyle(fontSize: 12.sp)
                   ),
-                  controller: controller,
+                  controller: widget.controller,
+                  style: TextStyle(fontSize: 12.sp),
                 ),
               ),
             ),

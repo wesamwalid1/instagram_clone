@@ -19,7 +19,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
     final authCubit = context.watch<AuthCubit>();
 
     return SizedBox(
-      height: 166.31.h,
+      height: 150.h,
       width: 390.h,
       child: Column(
         children: [

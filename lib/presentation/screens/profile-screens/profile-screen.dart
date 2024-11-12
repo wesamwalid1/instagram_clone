@@ -5,7 +5,6 @@ import 'package:instagramclone/presentation/widgets/profile-widgets/user-info-wi
 import '../../widgets/profile-widgets/edit-profile-widget.dart';
 import '../../widgets/profile-widgets/highlight-widget.dart';
 import '../../widgets/profile-widgets/tab-bar-widget.dart';
-
 import '../../widgets/profile-widgets/user-profile-data-widget.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -21,22 +20,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return  Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 60,left: 17,right: 17),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               const CustomAppBarProfilePage(),
-              SizedBox(height: 10.h,),
-               const UserProfileData(),
-              SizedBox(height: 10.h,),
-               const UserInfo(),
-               const EditProfile(),
-              SizedBox(height: 20.h,),
-               const highlights(),
-               SizedBox(height:500.h,child: const TabBarProfilePage())
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding:  EdgeInsets.only(top: 45.h,left: 10.w,right: 10.w),
+              child: Column(children: [
+                const CustomAppBarProfilePage(),
+                SizedBox(height: 10.h,),
+                const UserProfileData(),
+                SizedBox(height: 10.h,),
+                const UserInfo(),
+                SizedBox(height: 10.h,),
+                const EditProfile(),
+                SizedBox(height: 20.h,),
+                const highlights(),
+              ],),
+            ),
+
+            SizedBox(height: 10.h,),
+            SizedBox(height:500.h,child:  TabBarProfilePage())
+          ],
         ),
       ),
 

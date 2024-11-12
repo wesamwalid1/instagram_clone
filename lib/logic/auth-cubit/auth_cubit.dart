@@ -1,13 +1,14 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagramclone/data/cache/cache.dart';
 import '../../../../../data/models/auth-model.dart';
 part 'auth_state.dart';
+
 
 
 class AuthCubit extends Cubit<AuthState> {
@@ -18,6 +19,7 @@ class AuthCubit extends Cubit<AuthState> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   User? get currentUser => _auth.currentUser;
   final ImagePicker _picker = ImagePicker();
+  var cache = CacheHelper();
 
 
   Future<void> login(String email, String password) async {
@@ -27,6 +29,13 @@ class AuthCubit extends Cubit<AuthState> {
         email: email,
         password: password,
       );
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      String token = doc.get('uid') as String;
+      await cache.setData(key: 'auth_token', value: token);
       emit(AuthSuccess(_auth.currentUser!));
     } catch (e) {
       emit(AuthFailure(e.toString()));
@@ -61,9 +70,10 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> logout() async {
-    await _auth.signOut();
-    emit(AuthInitial());
+
+  Future<void> signOut() async {
+    await cache.deleteData(key: 'auth_token');
+    emit(SignOut());
   }
 
   Future<void> updateProfile({
@@ -130,6 +140,8 @@ class AuthCubit extends Cubit<AuthState> {
         'profilePhoto': photoUrl,
       });
 
+
+
       // Emit success state with updated user profile info
       await fetchUserInfo();
       emit(AuthProfilePhotoUpdateSuccess(currentUser!, UserModel(uid: uid, profilePhoto: photoUrl)));
@@ -137,8 +149,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthProfilePhotoUpdateFailure(e.toString()));
     }
   }
-
-
 
 
   Future<void> fetchUserInfo() async {

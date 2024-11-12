@@ -22,10 +22,10 @@ class _EditProfileState extends State<EditProfile> {
             height: 30.h,
             width: 300.w,
             color: const Color.fromRGBO(239, 239, 239, 1),
-            child: const Center(
+            child:  Center(
                 child: Text(
               "Edit profile",
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
             )),
           ),
         ),
