@@ -18,3 +18,18 @@ class PostUploadFailure extends PostState {
 
   PostUploadFailure(this.error);
 }
+
+// New states for loading posts
+class PostLoading extends PostState {}
+
+class PostLoadSuccess extends PostState {
+  final List<Map<String, dynamic>> posts;
+
+  PostLoadSuccess(this.posts);
+}
+
+class PostLoadFailure extends PostState {
+  final String error;
+
+  PostLoadFailure(this.error);
+}

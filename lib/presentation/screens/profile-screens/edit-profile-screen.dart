@@ -72,7 +72,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         );
                       },
                       onCancel: (){
-                        Navigator.pushNamed(context, "profile");
+                        Navigator.pop(context);
                       },
                     ),
                     SizedBox(height: 15.h,),

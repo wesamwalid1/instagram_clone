@@ -15,7 +15,7 @@ final class AuthFailure extends AuthState {
 
 final class AuthSuccess extends AuthState {
   final User user;
-  final UserModel? userModel; // Holds user profile data for convenience
+  final UserModel? userModel;
 
   AuthSuccess(this.user, {this.userModel});
 }
@@ -41,9 +41,12 @@ final class AuthProfilePhotoUpdateFailure extends AuthState {
 
   AuthProfilePhotoUpdateFailure(this.error);
 }
-final class SignOut extends AuthState{
+
+final class SignOut extends AuthState {}
+
+// New state to hold search results
+final class AuthSearchResults extends AuthState {
+  final List<UserModel> searchResults;
+
+  AuthSearchResults(this.searchResults);
 }
-
-
-
-

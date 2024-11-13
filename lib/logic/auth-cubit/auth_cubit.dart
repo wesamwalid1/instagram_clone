@@ -176,6 +176,35 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthFailure(e.toString()));
     }
   }
+
+
+  // Method to search users by username
+  Future<void> searchUsers(String query) async {
+    try {
+      emit(AuthLoading()); // Emit loading state
+
+      if (query.isEmpty) {
+        emit(AuthSearchResults([])); // If the query is empty, return empty results
+        return;
+      }
+
+      // Query users collection to search by username
+      final querySnapshot = await _firestore
+          .collection('users')
+          .where('username', isGreaterThanOrEqualTo: query)
+          .where('username', isLessThan: query + 'z')
+          .get();
+
+      // Map query results into a list of UserModel
+      final searchResults = querySnapshot.docs.map((doc) {
+        return UserModel.fromMap(doc.data());
+      }).toList();
+
+      emit(AuthSearchResults(searchResults)); // Emit results
+    } catch (e) {
+      emit(AuthFailure(e.toString())); // Emit failure state in case of error
+    }
+  }
 }
 
 

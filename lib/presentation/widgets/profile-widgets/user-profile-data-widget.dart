@@ -22,11 +22,13 @@ class _UserProfileDataState extends State<UserProfileData> {
     return BlocConsumer<AuthCubit,AuthState>(
         builder: (context,state){
           String profilePhotoUrl = 'assets/images/default_profile.png';
+          int postsCount = 0;
           // Check if we have a successful state with user info
           if (state is AuthSuccess && state.userModel != null) {
             profilePhotoUrl = (state.userModel!.profilePhoto!.isNotEmpty
                 ? state.userModel!.profilePhoto
                 : profilePhotoUrl)!;
+            postsCount = state.userModel!.postsCount!;
           }
           return Row(
             children: [
@@ -48,7 +50,7 @@ class _UserProfileDataState extends State<UserProfileData> {
               SizedBox(width: 30.w,),
                Column(
                 children: [
-                  Text("1,234",style: TextStyle(fontSize: 12.sp,fontWeight: FontWeight.bold),),
+                  Text("$postsCount",style: TextStyle(fontSize: 12.sp,fontWeight: FontWeight.bold),),
                   Text("posts",style: TextStyle(fontSize: 12.sp),)
                 ],
               ),

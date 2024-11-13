@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:instagramclone/logic/auth-cubit/auth_cubit.dart';
-import 'package:instagramclone/presentation/widgets/profile-widgets/app-bar-widget.dart';
+import 'package:instagramclone/presentation/screens/explore-screens/explore-screen.dart';
 import '../presentation/screens/home-screens/home-screen.dart';
 import '../presentation/screens/profile-screens/profile-screen.dart';
 
@@ -16,7 +16,7 @@ class BottomTabs extends StatefulWidget {
 class _BottomTabsState extends State<BottomTabs> {
   final List <Widget>_pages=[
     HomeScreen(),
-    Container(color: Colors.green,),
+    ExploreScreen(),
     Container(color: Colors.red,),
     Container(color: Colors.blue,),
     ProfileScreen(),

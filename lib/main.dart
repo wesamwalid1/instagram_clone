@@ -7,6 +7,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:instagramclone/core/theme/app_theme.dart';
 import 'package:instagramclone/logic/post-cubit/post_cubit.dart';
 import 'package:instagramclone/logic/theme-cubit/theme_cubit.dart';
+import 'package:instagramclone/presentation/screens/explore-screens/details-screen.dart';
 import 'package:instagramclone/presentation/screens/home-screens/add-screen.dart';
 import 'package:instagramclone/presentation/screens/home-screens/home-screen.dart';
 import 'package:instagramclone/presentation/screens/profile-screens/edit-profile-screen.dart';
@@ -50,7 +51,7 @@ class MyApp extends StatelessWidget {
         builder: (_, child) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider(create: (context) => AuthCubit()),
+              BlocProvider(create: (context) => AuthCubit()..fetchUserInfo()),
               BlocProvider(create: (context) => PostCubit()),
               BlocProvider(create: (context) => ThemeCubit()),
             ],
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
                         "edit_profile": (context) => const EditProfileScreen(),
                         "users_profile": (context) => const UserProfileScreen(),
                         "settings": (context) => const SettingsScreen(),
+                        //"details" : (context) =>  DetailsScreen()
                       },
                     )),
           );
@@ -78,20 +80,4 @@ class MyApp extends StatelessWidget {
   }
 }
 
-//return ScreenUtilInit(
-//       designSize: const Size(360, 690),
-//       minTextAdapt: true,
-//       splitScreenMode: true,
-//       builder: (_, child) {
-//         return MaterialApp(
-//           debugShowCheckedModeBanner: false,
-//           home: const loginScreen(),
-//           initialRoute: "login",
-//           routes: {
-//             "login": (context) => const loginScreen(),
-//             "register" : (context) => const registerScreen(),
-//             "home":(context)=> const homeScreen(),
-//           },
-//         );
-//       },
-//     );
+

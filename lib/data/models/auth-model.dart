@@ -12,23 +12,24 @@ class UserModel {
   List<String>? following;
   int? followersCount;
   int? followingCount;
-  int? postsCount;
+  int? postsCount;  // Add postsCount field
 
-  UserModel(
-      {this.uid,
-      this.username,
-      this.email,
-      this.profilePhoto,
-      this.gender,
-      this.phone,
-      this.bio,
-      this.website,
-      this.name,
-      this.followers,
-      this.following,
-      this.followersCount,
-      this.followingCount,
-      this.postsCount});
+  UserModel({
+    this.uid,
+    this.username,
+    this.email,
+    this.profilePhoto,
+    this.gender,
+    this.phone,
+    this.bio,
+    this.website,
+    this.name,
+    this.followers,
+    this.following,
+    this.followersCount,
+    this.followingCount,
+    this.postsCount,  // Add postsCount in constructor
+  });
 
   Map<String, dynamic> toMap() {
     return {
@@ -44,24 +45,27 @@ class UserModel {
       "followers": followers,
       "following": following,
       "followersCount": followersCount,
-      "followingCount": followingCount
+      "followingCount": followingCount,
+      "postsCount": postsCount,  // Include postsCount in map
     };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
-        uid: map["uid"],
-        profilePhoto: map["profilePhoto"],
-        name: map["name"],
-        username: map["username"],
-        website: map["website"],
-        bio: map["bio"],
-        email: map["email"],
-        phone: map["phone"],
-        gender: map["gender"],
-        followers: map["followers"],
-        following: map["following"],
-        followersCount: map["followersCount"],
-        followingCount: map["followingCount"]);
+      uid: map["uid"],
+      profilePhoto: map["profilePhoto"],
+      name: map["name"],
+      username: map["username"],
+      website: map["website"],
+      bio: map["bio"],
+      email: map["email"],
+      phone: map["phone"],
+      gender: map["gender"],
+      followers: map["followers"],
+      following: map["following"],
+      followersCount: map["followersCount"],
+      followingCount: map["followingCount"],
+      postsCount: map["postsCount"],  // Include postsCount when constructing
+    );
   }
 }

@@ -113,9 +113,3 @@ class _CustomPostsListViewState extends State<CustomPostsListView> {
         });
   }
 }
-
-//Center(
-//                   child: Text(
-//                     _posts[index],
-//                     style: const TextStyle(fontSize: 40),
-//                   )),

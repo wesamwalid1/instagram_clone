@@ -33,19 +33,28 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
             ),
             child: BlocBuilder<AuthCubit, AuthState>(
               builder: (context, state) {
-                String photoUrl = "https://static.thenounproject.com/png/5034901-200.png";
+                String profilePhotoUrl = 'assets/images/default_profile.png';
 
                 if (state is AuthSuccess && state.userModel != null) {
-                  photoUrl = (state.userModel!.profilePhoto!.isNotEmpty
+                  profilePhotoUrl = (state.userModel!.profilePhoto!.isNotEmpty
                       ? state.userModel!.profilePhoto
-                      : photoUrl)!;
+                      : profilePhotoUrl)!;
                 }
 
-                return Image(
-                  image: _imageFile != null
-                      ? FileImage(_imageFile!)
-                      : NetworkImage(photoUrl) as ImageProvider,
-                  fit: BoxFit.cover,
+                return Container(
+                  clipBehavior: Clip.antiAlias,
+                  height: 75.79.h,
+                  width: 75.79.w,
+                  decoration: const BoxDecoration(shape: BoxShape.circle),
+                  child:profilePhotoUrl.startsWith('http')
+                      ? Image.network(
+                    profilePhotoUrl,
+                    fit: BoxFit.cover,
+                  )
+                      : Image.asset(
+                    profilePhotoUrl,
+                    fit: BoxFit.cover,
+                  ),
                 );
               },
             ),
