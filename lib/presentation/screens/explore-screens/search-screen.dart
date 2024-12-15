@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../logic/auth-cubit/auth_cubit.dart';
+import '../profile-screens/users-profile-screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -33,7 +35,8 @@ class _SearchScreenState extends State<SearchScreen> {
   // Function to initiate search
   void _onSearchChanged(String query) {
     // Trigger the search in AuthCubit
-    context.read<AuthCubit>().searchUsers(query);
+    String currentUserUid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    context.read<AuthCubit>().searchUsers(query, currentUserUid);
   }
 
   @override
@@ -56,7 +59,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextField(
                     focusNode: _focusNode,
                     controller: _searchController,
-                    onChanged: _onSearchChanged, // Trigger search on text change
+                    onChanged: _onSearchChanged,
+                    // Trigger search on text change
                     decoration: InputDecoration(
                       hintText: "Search",
                       hintStyle: TextStyle(fontSize: 13.sp),
@@ -65,7 +69,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           borderSide: const BorderSide(color: Colors.red)),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey.shade300,  // Border color when TextField is enabled (but not focused)
+                          color: Colors.grey
+                              .shade300, // Border color when TextField is enabled (but not focused)
                         ),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -116,7 +121,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                 : null,
                           ),
                           onTap: () {
-                            // Navigate to user profile or details page
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UsersProfileScreen(
+                                          user: user,
+                                        )));
                           },
                         );
                       },

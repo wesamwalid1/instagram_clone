@@ -13,6 +13,7 @@ class UserModel {
   int? followersCount;
   int? followingCount;
   int? postsCount;  // Add postsCount field
+  List<String>? participants;
 
   UserModel({
     this.uid,
@@ -29,6 +30,7 @@ class UserModel {
     this.followersCount,
     this.followingCount,
     this.postsCount,  // Add postsCount in constructor
+    this.participants,
   });
 
   Map<String, dynamic> toMap() {
@@ -47,6 +49,7 @@ class UserModel {
       "followersCount": followersCount,
       "followingCount": followingCount,
       "postsCount": postsCount,  // Include postsCount in map
+      'participants':participants,
     };
   }
 
@@ -61,11 +64,12 @@ class UserModel {
       email: map["email"],
       phone: map["phone"],
       gender: map["gender"],
-      followers: map["followers"],
-      following: map["following"],
+      followers: List<String>.from(map["followers"] ?? []), // Cast to List<String>
+      following: List<String>.from(map["following"] ?? []), // Cast to List<String>
       followersCount: map["followersCount"],
       followingCount: map["followingCount"],
       postsCount: map["postsCount"],  // Include postsCount when constructing
+      participants: map['participants']
     );
   }
 }

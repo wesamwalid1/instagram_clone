@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:instagramclone/presentation/screens/profile-screens/saved-screen.dart';
 import 'package:instagramclone/presentation/widgets/settings-widgets/log-out-widget.dart';
 import '../../widgets/settings-widgets/custom-container-widget.dart';
 
@@ -38,9 +39,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
             SizedBox(
               height: 20.h,
             ),
-            CustomContainer(
-              imageIcon: "assets/images/bookmark.png",
-              title: "Saved",
+            GestureDetector(
+              onTap: (){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SavedScreen()),
+                );
+
+              },
+              child: CustomContainer(
+                imageIcon: "assets/images/bookmark.png",
+                title: "Saved",
+              ),
             ),
             SizedBox(
               height: 20.h,

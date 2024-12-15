@@ -23,7 +23,7 @@ class PostUploadFailure extends PostState {
 class PostLoading extends PostState {}
 
 class PostLoadSuccess extends PostState {
-  final List<Map<String, dynamic>> posts;
+  final List<PostModel> posts;
 
   PostLoadSuccess(this.posts);
 }
@@ -33,3 +33,33 @@ class PostLoadFailure extends PostState {
 
   PostLoadFailure(this.error);
 }
+
+class PostFavoritedToggle extends PostState {
+  final String postId;
+  final bool isFavorited;
+
+  PostFavoritedToggle(this.postId, {required this.isFavorited});
+}
+class PostSavedToggle extends PostState {
+  final String postId;
+  final bool isSaved;
+
+  PostSavedToggle({required this.postId, required this.isSaved});
+}
+
+// class PostLikeSuccess extends PostState {
+//   final int newLikes;
+//
+//   PostLikeSuccess(this.newLikes);
+// }
+//
+// class PostLikeFailure extends PostState {
+//   final String error;
+//
+//   PostLikeFailure(this.error);
+// }
+
+
+
+
+

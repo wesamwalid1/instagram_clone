@@ -1,28 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class CustomAppBarUsersProfile extends StatefulWidget {
-  const CustomAppBarUsersProfile({super.key});
+import '../../../data/models/auth-model.dart';
 
-  @override
-  State<CustomAppBarUsersProfile> createState() =>
-      _CustomAppBarUsersProfileState();
-}
+class CustomAppBarUsersProfile extends StatelessWidget {
+  final UserModel user ;
+  const CustomAppBarUsersProfile({Key? Key, required this.user}):super(key: Key);
 
-class _CustomAppBarUsersProfileState extends State<CustomAppBarUsersProfile> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(
-          Icons.arrow_back_ios_new,
-          size: 24.sp,
+        GestureDetector(
+          onTap: (){
+            Navigator.pop(context);
+          },
+          child: Icon(
+            Icons.arrow_back_ios_new,
+            size: 24.sp,
+          ),
         ),
+        Spacer(),
         Text(
-          "username",
-          style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold),
+          user.username??'username',
+          style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
         ),
+        Spacer(),
         Row(
           children: [
             Icon(

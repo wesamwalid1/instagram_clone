@@ -26,7 +26,7 @@ class _highlightsState extends State<highlights> {
                 child: Container(
                   height: 60.h,
                   width: 60.w,
-                  //padding: const EdgeInsets.symmetric(horizontal: 15),
+
                   clipBehavior: Clip.antiAlias,
                   decoration: const BoxDecoration(
                     color: Colors.white,

@@ -2,7 +2,8 @@
   "project_info": {
     "project_number": "536659062198",
     "project_id": "instagram-8fa09",
-    "storage_bucket": "instagram-8fa09.appspot.com"
+    "storage_bucket": "instagram-8fa09.appspot.com",
+    "firebase_url": "https://instagram-8fa09-default-rtdb.europe-west1.firebasedatabase.app"
   },
   "client": [
     {

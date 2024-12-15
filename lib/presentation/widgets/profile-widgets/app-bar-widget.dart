@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +18,8 @@ class _CustomAppBarProfilePageState extends State<CustomAppBarProfilePage> {
   @override
   void initState(){
     super.initState();
-    context.read<AuthCubit>().fetchUserInfo();
+     final String uid = FirebaseAuth.instance.currentUser!.uid;
+    context.read<AuthCubit>().fetchUserInfo(uid);
   }
   @override
   Widget build(BuildContext context) {

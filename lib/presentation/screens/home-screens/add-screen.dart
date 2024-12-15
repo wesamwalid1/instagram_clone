@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:instagramclone/main.dart';
 import 'package:instagramclone/presentation/screens/home-screens/add-post-screen.dart';
-import 'package:instagramclone/presentation/screens/home-screens/add-reels-screen.dart';
+import 'package:instagramclone/presentation/screens/home-screens/add-story-screen.dart';
 
 class AddScreen extends StatefulWidget {
   const AddScreen({super.key});
@@ -48,9 +47,11 @@ class _AddScreenState extends State<AddScreen> {
             PageView(
               controller: pageController,
               onPageChanged: onPageChange,
-              children: const [
-                AddPostScreen(),
-                AddReelsScreen(),
+              children: [
+                //const AddPostScreen(),
+                //AddReelsScreen(),
+               AddPostScreen(),
+                AddStoryScreen(),
               ],
             ),
             AnimatedPositioned(
@@ -58,7 +59,7 @@ class _AddScreenState extends State<AddScreen> {
               bottom: 10.h,
               right: _currentIndex == 0 ? 100.w : 150.w,
               child: Container(
-                width: 120.w,
+                width: 200.w,
                 height: 30.h,
                 decoration: BoxDecoration(
                     color: Colors.black.withOpacity(0.6),
@@ -81,17 +82,17 @@ class _AddScreenState extends State<AddScreen> {
                     ),
                     GestureDetector(
                       onTap: (){
-                        navigationTapped(1);
+                        navigationTapped(2);
                       },
                       child: Text(
-                        "Reels",
+                        "Story",
                         style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.w500,
                             color:
                             _currentIndex == 1 ? Colors.white : Colors.grey),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

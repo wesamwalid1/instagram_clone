@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:instagramclone/presentation/screens/chat-screens/direct-screen.dart';
 
 class CustomAppBarHomePage extends StatefulWidget {
   const CustomAppBarHomePage({super.key});
@@ -39,10 +40,20 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
               SizedBox(
                 width: 15.w,
               ),
-              Image.asset(
-                "assets/images/Messenger_icon.png",
-                width: 30.w,
-                height: 30.h,
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DirectScreen(),
+                    ),
+                  );
+                },
+                child: Image.asset(
+                  "assets/images/Messenger_icon.png",
+                  width: 30.w,
+                  height: 30.h,
+                ),
               ),
               SizedBox(
                 width: 15.w,

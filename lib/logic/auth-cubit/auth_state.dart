@@ -50,3 +50,15 @@ final class AuthSearchResults extends AuthState {
 
   AuthSearchResults(this.searchResults);
 }
+
+final class FetchUsersLoading extends AuthState {}
+final class FetchUsersSuccess extends AuthState {
+  final List<UserModel> users;
+  FetchUsersSuccess(this.users);
+}
+final class FetchUsersError extends AuthState {
+  final String error;
+  FetchUsersError(this.error);
+}
+
+

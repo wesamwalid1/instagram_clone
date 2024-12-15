@@ -1,182 +1,180 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:photo_manager/photo_manager.dart';
-
-import 'add-post-text-screen.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:instagramclone/logic/post-cubit/post_cubit.dart';
+import 'package:video_player/video_player.dart';
 
 class AddPostScreen extends StatefulWidget {
-  const AddPostScreen({super.key});
-
   @override
-  State<AddPostScreen> createState() => _AddPostScreenState();
+  _AddPostScreenState createState() => _AddPostScreenState();
 }
 
 class _AddPostScreenState extends State<AddPostScreen> {
-  final List<Widget> _mediaList = [];
-  final List<File> path = [];
-  File? _file;
-  int currentPage = 0;
-  int? lastPage;
-  bool isLoading = false;
-  final ScrollController _scrollController = ScrollController();
+  List<XFile> _pickedMedia = [];
+  VideoPlayerController? _videoController;
+  final ImagePicker _picker = ImagePicker();
+  final TextEditingController _descriptionController = TextEditingController();
 
-  _fetchNewMedia() async {
-    if (isLoading) return;
-    setState(() {
-      isLoading = true;
-    });
-    lastPage = currentPage;
-    final PermissionState ps = await PhotoManager.requestPermissionExtend();
-    if (ps.isAuth) {
-      List<AssetPathEntity> album =
-          await PhotoManager.getAssetPathList(type: RequestType.image);
-      List<AssetEntity> media =
-          await album[0].getAssetListPaged(page: currentPage, size: 60);
-      for (var asset in media) {
-        if (asset.type == AssetType.image) {
-          final file = await asset.file;
-          if (file != null) {
-            path.add(File(file.path));
-            _file = path[0];
-          }
-        }
-      }
-      List<Widget> temp = [];
-      for (var asset in media) {
-        temp.add(
-          FutureBuilder(
-            future: asset.thumbnailDataWithSize(const ThumbnailSize(200, 200)),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return Container(
-                  child: Stack(
-                    children: [
-                      Positioned.fill(
-                        child: Image.memory(
-                          snapshot.data!,
-                          fit: BoxFit.cover,
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              }
-              return Container();
-            },
-          ),
-        );
-      }
+  Future<void> _pickMedia(bool isImage) async {
+    if (isImage) {
+      final List<XFile>? images = await _picker.pickMultiImage();
       setState(() {
-        _mediaList.addAll(temp);
-        currentPage++; // Move to the next page for pagination
-        isLoading = false; // Stop loading
+        _pickedMedia = images ?? [];
+        _videoController?.dispose();
+        _videoController = null;
       });
     } else {
-      setState(() {
-        isLoading = false;
-      });
+      final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
+      if (video != null) {
+        _videoController = VideoPlayerController.file(File(video.path))
+          ..initialize().then((_) {
+            setState(() {
+              _pickedMedia = [video];
+              _videoController!.setLooping(true);
+              _videoController!.play();
+            });
+          }).catchError((e) {
+            print("Error initializing video: $e");
+          });
+      }
     }
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _fetchNewMedia();
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-          _scrollController.position.maxScrollExtent) {
-        _fetchNewMedia(); // Fetch new media when scroll reaches the bottom
-      }
-    });
+  void dispose() {
+    _videoController?.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
-
-  int indexx = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          "Add Post",
-          style: TextStyle(color: Colors.black),
+    return BlocConsumer<PostCubit, PostState>(listener: (context, state) {
+
+       if (state is PostUploadSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Post shared successfully!")),
+        );
+        Navigator.pop(context);
+      } else if (state is PostUploadFailure) {
+        print("Failed to share post: ${state.error}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to share post: ${state.error}")),
+        );
+      }
+    }, builder: (context, state) {
+      if (state is PostLoading){
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      final postCubit = context.read<PostCubit>();
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+      return Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.black),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: const Text(
+            "New post",
+            style: TextStyle(color: Colors.black),
+          ),
+          centerTitle: false,
+          actions: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Center(
+                  child: GestureDetector(
+                    onTap: () async {
+                      // Fetch the user's username
+                      DocumentSnapshot userSnapshot =
+                      await _firestore.collection('users').doc(uid).get();
+                      String? username = userSnapshot['username'];
+                      String? userImage = userSnapshot['profilePhoto'];
+
+                      postCubit.uploadPost(
+                        uid: uid,
+                        mediaFiles:
+                        _pickedMedia.map((file) => File(file.path)).toList(),
+                        description: _descriptionController.text,
+                        username: username!,
+                        userImage: userImage!,
+                        mediaType: _videoController != null
+                            ? "video"
+                            : _pickedMedia.length > 1
+                            ? "carousel"
+                            : "image",
+                        location: 'ggg',
+                      );
+                    },
+                    child: Text(
+                      "Share",
+                      style: TextStyle(color: Colors.blue, fontSize: 15.sp),
+                    ),
+                  )),
+            ),
+          ],
         ),
-        actions: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: GestureDetector(
-              onTap: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddPostTextScreen(_file!)));
-              },
-              child: Text(
-                "Next",
-                style: TextStyle(fontSize: 15.sp, color: Colors.blue),
+        body: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () => _pickMedia(true),
+                  child: const Text('Pick Images'),
+                ),
+                SizedBox(width: 10.w),
+                ElevatedButton(
+                  onPressed: () => _pickMedia(false),
+                  child: const Text('Pick Video'),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter a description',
+                  border: OutlineInputBorder(),
+                ),
+                maxLines: 3,
               ),
             ),
-          )
-        ],
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 375.h,
-                child: GridView.builder(
-                    itemCount: 1,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            mainAxisSpacing: 1,
-                            crossAxisSpacing: 1),
-                    itemBuilder: (context, index) {
-                      return _mediaList[indexx];
-                    }),
-              ),
-              if (isLoading) const CircularProgressIndicator(),
-              Container(
-                width: double.infinity,
-                height: 40.h,
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 10.w,
-                    ),
-                    Text(
-                      "Recent",
-                      style: TextStyle(
-                          fontSize: 15.sp, fontWeight: FontWeight.w600),
-                    )
-                  ],
+            Expanded(
+              child: _pickedMedia.isEmpty
+                  ? const Center(child: Text('No media selected'))
+                  : GridView.builder(
+                itemCount: _pickedMedia.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _videoController != null ? 1 : 3,
+                  crossAxisSpacing: 4.0,
+                  mainAxisSpacing: 4.0,
                 ),
+                itemBuilder: (context, index) {
+                  if (_videoController != null && index == 0) {
+                    return AspectRatio(
+                      aspectRatio: _videoController!.value.aspectRatio,
+                      child: VideoPlayer(_videoController!),
+                    );
+                  } else {
+                    return Image.file(
+                      File(_pickedMedia[index].path),
+                      fit: BoxFit.cover,
+                    );
+                  }
+                },
               ),
-              GridView.builder(
-                  controller: _scrollController,
-                  shrinkWrap: true,
-                  itemCount: _mediaList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 1,
-                      crossAxisSpacing: 2),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            indexx = index;
-                            _file = path[index];
-                          });
-                        },
-                        child: _mediaList[index]);
-                  }),
-            ],
-          ),
+            ),
+          ],
         ),
-      ),
-    );
+      );
+    });
   }
 }

@@ -1,6 +1,26 @@
-part of 'stories_cubit.dart';
+import '../../data/models/stories-model.dart';
+abstract class StoryState {}
 
-@immutable
-sealed class StoriesState {}
+class StoryInitial extends StoryState {}
 
-final class StoriesInitial extends StoriesState {}
+class StoryLoading extends StoryState {}
+
+class StoryCreatedSuccess extends StoryState {
+  final StoryModel story;
+
+  StoryCreatedSuccess(this.story);
+}
+class StoriesLoaded extends StoryState {
+  final List<StoryModel> stories;
+  final bool userHasStory; // New field to check if user has a story
+
+  StoriesLoaded({required this.stories, required this.userHasStory});
+}
+
+class StoryViewedSuccess extends StoryState {}
+
+class StoryError extends StoryState {
+  final String error;
+
+  StoryError(this.error);
+}

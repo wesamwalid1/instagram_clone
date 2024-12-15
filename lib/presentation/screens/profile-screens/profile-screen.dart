@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:instagramclone/logic/auth-cubit/auth_cubit.dart';
+import 'package:instagramclone/logic/post-cubit/post_cubit.dart';
 import 'package:instagramclone/presentation/widgets/profile-widgets/app-bar-widget.dart';
 import 'package:instagramclone/presentation/widgets/profile-widgets/user-info-widget.dart';
 import '../../widgets/profile-widgets/edit-profile-widget.dart';
@@ -10,11 +14,19 @@ import '../../widgets/profile-widgets/user-profile-data-widget.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
+
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
+    context.read<AuthCubit>().fetchUserInfo(uid);
+    context.read<PostCubit>().loadUserPosts(uid);
+  }
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -30,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 10.h,),
                 const UserProfileData(),
                 SizedBox(height: 10.h,),
-                const UserInfo(),
+                const UsersInfo(),
                 SizedBox(height: 10.h,),
                 const EditProfile(),
                 SizedBox(height: 20.h,),

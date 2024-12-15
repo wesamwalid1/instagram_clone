@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../logic/auth-cubit/auth_cubit.dart';
+import '../../../shared/bottom-navigation-bar.dart';
 import '../../widgets/edit-profile-widgets/custom-app-bar-widget.dart';
 import '../../widgets/edit-profile-widgets/custom-text-field-widget.dart';
 import '../../widgets/edit-profile-widgets/profile-photo-widget.dart';
@@ -25,7 +27,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchUserInfo();
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
+    context.read<AuthCubit>().fetchUserInfo(uid);
   }
 
   @override
@@ -35,14 +38,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (state is AuthSuccess || state is AuthProfileUpdateSuccess) {
           // Populate controllers with user data when fetch is successful or after an update
           if (state is AuthSuccess) {
-            nameController = TextEditingController(text: state.userModel?.name ?? '');
-            usernameController = TextEditingController(text: state.userModel?.username ?? '');
-            emailController = TextEditingController(text: state.userModel?.email ?? '');
-            bioController = TextEditingController(text: state.userModel?.bio ?? '');
-            phoneController = TextEditingController(text: state.userModel?.phone ?? '');
-            genderController = TextEditingController(text: state.userModel?.gender ?? '');
-            websiteController = TextEditingController(text: state.userModel?.website ?? '');
+            nameController =
+                TextEditingController(text: state.userModel?.name ?? '');
+            usernameController =
+                TextEditingController(text: state.userModel?.username ?? '');
+            emailController =
+                TextEditingController(text: state.userModel?.email ?? '');
+            bioController =
+                TextEditingController(text: state.userModel?.bio ?? '');
+            phoneController =
+                TextEditingController(text: state.userModel?.phone ?? '');
+            genderController =
+                TextEditingController(text: state.userModel?.gender ?? '');
+            websiteController =
+                TextEditingController(text: state.userModel?.website ?? '');
           }
+        } else if (state is AuthProfilePhotoUpdateSuccess) {
+          // Navigate back to EditProfileScreen when profile photo is updated
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => EditProfileScreen()));
         } else if (state is AuthFailure) {
           // Show error message on failure
           ScaffoldMessenger.of(context).showSnackBar(
@@ -56,26 +70,32 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             backgroundColor: Colors.white,
             body: SingleChildScrollView(
               child: Padding(
-                padding:  EdgeInsets.only(top: 40.h, left: 20.w, right: 20.w),
+                padding: EdgeInsets.only(top: 40.h, left: 20.w, right: 20.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CustomAppBarEditProfileScreen(
-                      onDone:(){
+                      onDone: () {
                         context.read<AuthCubit>().updateProfile(
-                          name: nameController.text,
-                          username: usernameController.text,
-                          bio: bioController.text,
-                          phone: phoneController.text,
-                          gender: genderController.text,
-                          website: websiteController.text,
-                        );
+                              name: nameController.text,
+                              username: usernameController.text,
+                              bio: bioController.text,
+                              phone: phoneController.text,
+                              gender: genderController.text,
+                              website: websiteController.text,
+                            );
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => BottomTabs()));
                       },
-                      onCancel: (){
+                      onCancel: () {
                         Navigator.pop(context);
                       },
                     ),
-                    SizedBox(height: 15.h,),
+                    SizedBox(
+                      height: 15.h,
+                    ),
                     const ProfilePhotoWidget(),
                     CustomTextFieldWidget(
                       controller: nameController,
@@ -116,7 +136,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 10.h),
-
                     CustomTextFieldWidget(
                       controller: emailController,
                       title: "Email",
@@ -131,7 +150,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: genderController,
                       title: "Gender",
                       hint: "Enter Your Gender",
-
                     ),
                     SizedBox(height: 200.h),
                   ],

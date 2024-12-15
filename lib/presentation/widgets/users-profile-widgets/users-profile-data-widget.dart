@@ -1,51 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class UsersProfileData extends StatefulWidget {
-  const UsersProfileData({super.key});
+import '../../../data/models/auth-model.dart';
 
-  @override
-  State<UsersProfileData> createState() => _UsersProfileDataState();
-}
+class UsersProfileData extends StatelessWidget {
+  final UserModel user;
 
-class _UsersProfileDataState extends State<UsersProfileData> {
+  const UsersProfileData({super.key, required this.user});
+
   @override
   Widget build(BuildContext context) {
     String profilePhotoUrl = 'assets/images/default_profile.png';
+    int postsCount = 0;
+    int followersCount = 0;
+    int followingCount = 0;
+    profilePhotoUrl =
+        (user.profilePhoto!.isNotEmpty ? user.profilePhoto : profilePhotoUrl)!;
+    postsCount = (user.postsCount ?? postsCount);
+    followersCount = (user.followersCount ?? followersCount);
+    followingCount = (user.followingCount ?? followingCount);
+
     return Row(
       children: [
         Container(
           clipBehavior: Clip.antiAlias,
-          height: 70.h,
-          width: 70.w,
+          height: 75.79.h,
+          width: 75.79.w,
           decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Image.asset(
-            profilePhotoUrl,
-            fit: BoxFit.cover,
-          ),
+          child: profilePhotoUrl.startsWith('http')
+              ? Image.network(
+                  profilePhotoUrl,
+                  fit: BoxFit.cover,
+                )
+              : Image.asset(
+                  profilePhotoUrl,
+                  fit: BoxFit.cover,
+                ),
         ),
-        SizedBox(width: 10.w,),
+        SizedBox(
+          width: 50.w,
+        ),
         Column(
           children: [
-            Text("1,234",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
-            Text("posts",style: TextStyle(fontSize: 14.sp),)
+            Text(
+              "$postsCount",
+              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "posts",
+              style: TextStyle(fontSize: 12.sp),
+            )
           ],
         ),
-        SizedBox(width: 45.w,),
+        SizedBox(
+          width: 15.w,
+        ),
         Column(
           children: [
-            Text("5,678",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
-            Text("Followers",style: TextStyle(fontSize: 14.sp),)
+            Text(
+              "$followersCount",
+              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "Followers",
+              style: TextStyle(fontSize: 12.sp),
+            )
           ],
         ),
-        SizedBox(width: 45.w,),
+        SizedBox(
+          width: 15.w,
+        ),
         Column(
           children: [
-            Text("9,101",style: TextStyle(fontSize: 14.sp,fontWeight: FontWeight.bold),),
-            Text("Following",style: TextStyle(fontSize: 14.sp),)
+            Text(
+              "$followingCount",
+              style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              "Following",
+              style: TextStyle(fontSize: 12.sp),
+            )
           ],
         ),
-
       ],
     );
   }

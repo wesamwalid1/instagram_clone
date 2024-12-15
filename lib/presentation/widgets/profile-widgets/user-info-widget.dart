@@ -1,21 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../logic/auth-cubit/auth_cubit.dart';
 
-class UserInfo extends StatefulWidget {
-  const UserInfo({super.key});
+class UsersInfo extends StatefulWidget {
+  const UsersInfo({super.key});
 
   @override
-  State<UserInfo> createState() => _UserInfoState();
+  State<UsersInfo> createState() => _UsersInfoState();
 }
 
-class _UserInfoState extends State<UserInfo> {
+class _UsersInfoState extends State<UsersInfo> {
   @override
   void initState() {
     super.initState();
-    context.read<AuthCubit>().fetchUserInfo();
+    final String uid = FirebaseAuth.instance.currentUser!.uid;
+    context.read<AuthCubit>().fetchUserInfo(uid);
   }
 
   @override

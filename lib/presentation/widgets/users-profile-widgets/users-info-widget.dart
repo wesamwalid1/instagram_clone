@@ -1,35 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class UsersInfo extends StatefulWidget {
-  const UsersInfo({super.key});
+import '../../../data/models/auth-model.dart';
 
-  @override
-  State<UsersInfo> createState() => _UsersInfoState();
-}
+class UsersInfo extends StatelessWidget {
+  final UserModel user ;
+  const UsersInfo({super.key, required this.user});
 
-class _UsersInfoState extends State<UsersInfo> {
   @override
   Widget build(BuildContext context) {
+    String? name = user.name;
+    String? bio = user.bio;
+    String? website = user.website;
      return SizedBox(
       width: 300.w,
-      height: 80.h,
       child:  Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "name",
-            style:  TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            "bio",
-            style: TextStyle(fontSize: 13.sp),
-          ),
-          Text(
-            "website",
-            style: TextStyle(fontSize: 13.sp),
-          )
+          if (name != null && name.isNotEmpty)
+            Text(
+              name,
+              style: TextStyle(fontSize: 10.sp, fontWeight: FontWeight.bold),
+            ),
+
+          if (bio != null && bio.isNotEmpty)
+            Text(
+              bio,
+              style: TextStyle(fontSize: 10.sp),
+            ),
+          if (website != null && website.isNotEmpty)
+            Text(
+              website,
+              style: TextStyle(fontSize: 10.sp, color: Colors.blue),
+            ),
+          SizedBox(height: 20.h),
+
         ],
       ),
     );
