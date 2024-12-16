@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:instagramclone/main.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -15,30 +14,36 @@ class _EditProfileState extends State<EditProfile> {
     return Row(
       children: [
         GestureDetector(
-          onTap:(){
+          onTap: () {
             Navigator.pushNamed(context, "edit_profile");
           },
           child: Container(
             height: 30.h,
             width: 300.w,
-            color: const Color.fromRGBO(239, 239, 239, 1),
-            child:  Center(
-                child: Text(
-              "Edit profile",
-              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
-            )),
+            color: Theme.of(context).colorScheme.secondary.withOpacity(0.1), // Use theme color for background
+            child: Center(
+              child: Text(
+                "Edit profile",
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).textTheme.bodyLarge?.color, // Use bodyLarge for text color
+                ),
+              ),
+            ),
           ),
         ),
         SizedBox(
           width: 5.w,
         ),
         Container(
-            height: 30.h,
-            width: 32.w,
-            color: const Color.fromRGBO(239, 239, 239, 1),
-            child: Image.asset(
-              "assets/images/add-people-icon.png",
-            ))
+          height: 30.h,
+          width: 32.w,
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1), // Same background color as above
+          child: Image.asset(
+            "assets/images/add-people-icon.png",
+          ),
+        ),
       ],
     );
   }

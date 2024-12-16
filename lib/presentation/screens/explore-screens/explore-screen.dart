@@ -23,15 +23,25 @@ class _ExploreScreenState extends State<ExploreScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current theme (dark or light mode)
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Set the background color based on the theme mode
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+
+    // Set text color based on the theme mode
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Search bar
+            // Search bar widget
             Padding(
-                padding: EdgeInsets.only(top: 35.h, left: 10.w, right: 10.w),
-                child: const SearchBarWidget()),
+              padding: EdgeInsets.only(top: 35.h, left: 10.w, right: 10.w),
+              child: const SearchBarWidget(),
+            ),
             BlocConsumer<PostCubit, PostState>(
               listener: (context, state) {
                 if (state is PostLoadFailure) {
@@ -50,7 +60,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     return Center(
                       child: Text(
                         "No posts yet",
-                        style: TextStyle(fontSize: 18.sp, color: Colors.grey),
+                        style: TextStyle(fontSize: 18.sp, color: textColor),
                       ),
                     );
                   }
@@ -60,15 +70,17 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     posts: posts,
                   );
                 } else if (state is PostLoadFailure) {
-                  return const Center(
-                    child: Text("Failed to load posts"),
+                  return Center(
+                    child: Text(
+                      "Failed to load posts",
+                      style: TextStyle(fontSize: 18.sp, color: textColor),
+                    ),
                   );
                 } else {
                   return const SizedBox();
                 }
               },
-            )
-
+            ),
           ],
         ),
       ),

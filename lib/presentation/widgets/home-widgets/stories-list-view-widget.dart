@@ -45,9 +45,13 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
     if (currentUserId == null) {
       return const Center(
           child: CircularProgressIndicator(
-        color: Colors.blue,
-      ));
+            color: Colors.blue,
+          ));
     }
+
+    // Determine the current theme's primary color for dynamic styling
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
 
     return BlocConsumer<StoryCubit, StoryState>(
       listener: (context, state) {
@@ -61,31 +65,28 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
         if (state is StoryLoading) {
           return const Center(
               child: CircularProgressIndicator(
-            color: Colors.red,
-          ));
+                color: Colors.red,
+              ));
         } else if (state is StoriesLoaded) {
           final stories = state.stories;
           final userHasStory = state.userHasStory;
+
           // Create a set of unique users who have shared stories
           final usersWithStories = <String>{};
           for (var story in stories) {
-             if (currentUserId != story.userId){
-               usersWithStories.add(story.userId!);
-             }
+            if (currentUserId != story.userId) {
+              usersWithStories.add(story.userId!);
+            }
           }
-          final userStories =
-              stories.where((s) => s.userId == currentUserId).toList();
-          final usersStories =
-              stories.where((s) => s.userId != currentUserId).toList();
+          final userStories = stories.where((s) => s.userId == currentUserId).toList();
+          final usersStories = stories.where((s) => s.userId != currentUserId).toList();
 
           return SizedBox(
             height: 90.h,
             width: MediaQuery.of(context).size.width.w,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount:
-                    usersWithStories.length+1
-              ,
+              itemCount: usersWithStories.length + 1,
               itemBuilder: (context, index) {
                 if (index == 0) {
                   // Show the current user's story with blue "Add Story" icon or long-press option
@@ -93,9 +94,6 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                     onTap: () {
                       if (userHasStory) {
                         // Navigate to view the user's existing story
-                        // final userStories = stories
-                        //     .where((s) => s.userId == currentUserId)
-                        //     .toList();
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -145,19 +143,19 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                                       if (state is AuthSuccess &&
                                           state.userModel != null) {
                                         profilePhotoUrl = (state.userModel!
-                                                .profilePhoto!.isNotEmpty
+                                            .profilePhoto!.isNotEmpty
                                             ? state.userModel!.profilePhoto
                                             : profilePhotoUrl)!;
                                       }
                                       return profilePhotoUrl.startsWith('http')
                                           ? Image.network(
-                                              profilePhotoUrl,
-                                              fit: BoxFit.cover,
-                                            )
+                                        profilePhotoUrl,
+                                        fit: BoxFit.cover,
+                                      )
                                           : Image.asset(
-                                              profilePhotoUrl,
-                                              fit: BoxFit.cover,
-                                            );
+                                        profilePhotoUrl,
+                                        fit: BoxFit.cover,
+                                      );
                                     },
                                     listener: (context, state) {},
                                   ),
@@ -196,70 +194,67 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                 } else {
                   return usersStories.isNotEmpty
                       ? GestureDetector(
-                          onTap: () {
-                            // Navigate to view the selected user's story
-                            // final userStories = stories
-                            //     .where((s) => s.userId != currentUserId)
-                            //     .toList();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    StoryViewScreen(stories: usersStories),
+                    onTap: () {
+                      // Navigate to view the selected user's story
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              StoryViewScreen(stories: usersStories),
+                        ),
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                clipBehavior: Clip.antiAlias,
+                                width: 60.w,
+                                height: 60.h,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Image.network(
+                                  stories[index].profilePhoto ?? '',
+                                  fit: BoxFit.fill,
+                                  errorBuilder:
+                                      (context, error, stackTrace) {
+                                    return Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                width: 2,
+                                                color: Theme.of(context)
+                                                    .brightness ==
+                                                    Brightness.light
+                                                    ? Colors.grey
+                                                    .withOpacity(0.2)
+                                                    : Colors.grey
+                                                    .withOpacity(
+                                                    0.5))),
+                                        child:
+                                        const Icon(Icons.person_outline));
+                                  },
+                                ),
                               ),
-                            );
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Column(
-                              children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      clipBehavior: Clip.antiAlias,
-                                      width: 60.w,
-                                      height: 60.h,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Image.network(
-                                        stories[index].profilePhoto ?? '',
-                                        fit: BoxFit.fill,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return Container(
-                                              decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  border: Border.all(
-                                                      width: 2,
-                                                      color: Theme.of(context)
-                                                                  .brightness ==
-                                                              Brightness.light
-                                                          ? Colors.grey
-                                                              .withOpacity(0.2)
-                                                          : Colors.grey
-                                                              .withOpacity(
-                                                                  0.5))),
-                                              child: const Icon(
-                                                  Icons.person_outline));
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Spacer(),
-                                Text(
-                                  stories[index].username.toString(),
-                                  style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.bold),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
+                            ],
                           ),
-                        )
+                          const Spacer(),
+                          Text(
+                            stories[index].username.toString(),
+                            style: TextStyle(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.bold),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                       : SizedBox();
                 }
               },
@@ -272,169 +267,3 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
     );
   }
 }
-// SizedBox(
-//       height: 110.h,
-//       width: MediaQuery.of(context).size.width.w,
-//       child: isLoading
-//           ? const Center(child: CircularProgressIndicator())
-//           : ListView.builder(
-//               itemCount: stories.length,
-//               scrollDirection: Axis.horizontal,
-//               physics: const BouncingScrollPhysics(),
-//               shrinkWrap: true,
-//               itemBuilder: (context, index) {
-//                 final story = stories[index];
-//
-//                 // Show current user's story in the first container
-//                 return Column(
-//                   children: [
-//                     Padding(
-//                       padding: EdgeInsets.symmetric(horizontal: 8.w),
-//                       child: index == 0
-//                           ? GestureDetector(
-//                               onTap: () async {
-//                                 if (currentUserUid.isNotEmpty) {
-//                                   final storyCubit =
-//                                       BlocProvider.of<StoryCubit>(context);
-//                                   await storyCubit.fetchCurrentUserStories();
-//                                   Navigator.push(
-//                                     context,
-//                                     MaterialPageRoute(
-//                                       builder: (context) =>
-//                                           const StoryViewScreen(),
-//                                     ),
-//                                   );
-//                                 }
-//                               },
-//                               child: Stack(
-//                                 children: [
-//                                   // Profile Image Container
-//                                   Container(
-//                                     height: 72.h,
-//                                     width: 72.w,
-//                                     clipBehavior: Clip.antiAlias,
-//                                     decoration: const BoxDecoration(
-//                                       color: Colors.white,
-//                                       shape: BoxShape.circle,
-//                                     ),
-//                                     child: Image.asset(
-//                                       'assets/images/default_profile.png',
-//                                       fit: BoxFit.fill,
-//                                     ),
-//                                   ),
-//
-//                                   // Positioned small Container with + icon
-//                                   Positioned(
-//                                     bottom: 0,
-//                                     right: 0,
-//                                     child: Container(
-//                                       height: 25.h,
-//                                       width: 25.w,
-//                                       decoration: BoxDecoration(
-//                                         color: Colors.black,
-//                                         shape: BoxShape.circle,
-//                                         border: Border.all(
-//                                           color: Colors.white,
-//                                           width: 2,
-//                                         ),
-//                                       ),
-//                                       child: const Icon(
-//                                         Icons.add,
-//                                         color: Colors.white,
-//                                         size: 12,
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             )
-//                           : GestureDetector(
-//                               onTap: () async {
-//                                 if (currentUserUid.isNotEmpty) {
-//                                   final storyCubit =
-//                                       BlocProvider.of<StoryCubit>(context);
-//                                   await storyCubit.fetchCurrentUserStories();
-//                                   Navigator.push(
-//                                     context,
-//                                     MaterialPageRoute(
-//                                       builder: (context) =>
-//                                           const StoryViewScreen(),
-//                                     ),
-//                                   );
-//                                 }
-//                               },
-//                               child: Container(
-//                                 height: 82.h,
-//                                 width: 82.w,
-//                                 decoration: const BoxDecoration(
-//                                   shape: BoxShape.circle,
-//                                   gradient: LinearGradient(
-//                                     colors: [
-//                                       Color.fromRGBO(201, 19, 185, 1),
-//                                       Color.fromRGBO(249, 55, 63, 1),
-//                                       Color.fromRGBO(254, 205, 0, 1),
-//                                     ],
-//                                     begin: Alignment.topLeft,
-//                                     end: Alignment.bottomRight,
-//                                   ),
-//                                 ),
-//                                 child: Padding(
-//                                   padding: const EdgeInsets.all(3),
-//                                   child: Container(
-//                                     decoration: const BoxDecoration(
-//                                       color: Colors.white,
-//                                       shape: BoxShape.circle,
-//                                     ),
-//                                     child: Padding(
-//                                       padding: const EdgeInsets.all(3),
-//                                       child: Container(
-//                                         height: 72.h,
-//                                         width: 72.w,
-//                                         clipBehavior: Clip.antiAlias,
-//                                         decoration: const BoxDecoration(
-//                                           color: Colors.white,
-//                                           shape: BoxShape.circle,
-//                                         ),
-//                                         child: ClipOval(
-//                                           child: Image.network(
-//                                             story.profilePhoto ??
-//                                                 'https://example.com/default_profile.png',
-//                                             fit: BoxFit.fill,
-//                                           ),
-//                                         ),
-//                                       ),
-//                                     ),
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                     ),
-//                     SizedBox(height: 5.h),
-//                     Text(
-//                       index == 0
-//                           ? "Your Story"Story
-//                           : story.username ?? "User $index",
-//                       style: TextStyle(
-//                           fontWeight: FontWeight.bold, fontSize: 8.sp),
-//                     ),
-//                   ],
-//                 );
-//               },
-//             ),
-//     );
-
-//Container(
-//                                               decoration: BoxDecoration(
-//                                                   shape: BoxShape.circle,
-//                                                   border: Border.all(
-//                                                       width: 2,
-//                                                       color: Theme.of(context)
-//                                                                   .brightness ==
-//                                                               Brightness.light
-//                                                           ? Colors.grey
-//                                                               .withOpacity(0.2)
-//                                                           : Colors.grey
-//                                                               .withOpacity(
-//                                                                   0.5))),
-//                                               child:
-//                                                   Icon(Icons.person_outline));

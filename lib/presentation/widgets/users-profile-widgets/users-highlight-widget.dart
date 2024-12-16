@@ -11,24 +11,27 @@ class UsersHighLight extends StatefulWidget {
 class _UsersHighLightState extends State<UsersHighLight> {
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return SizedBox(
       height: 90.h,
       width: 390.w,
       child: ListView.builder(
-          itemCount: 10,
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return Column(children: [
+        itemCount: 10,
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
               Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
                 child: Container(
                   height: 60.h,
                   width: 60.w,
                   clipBehavior: Clip.antiAlias,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? Colors.grey[800] : Colors.white,
                     shape: BoxShape.circle,
                   ),
                   child: Image.asset(
@@ -37,13 +40,19 @@ class _UsersHighLightState extends State<UsersHighLight> {
                   ),
                 ),
               ),
-              SizedBox(height: 5.h,),
-               Text(
+              SizedBox(height: 5.h),
+              Text(
                 "Text here",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10.sp),
-              )
-            ]);
-          }),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10.sp,
+                  color: isDarkMode ? Colors.white : Colors.black,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

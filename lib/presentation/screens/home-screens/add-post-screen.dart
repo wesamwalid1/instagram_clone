@@ -53,9 +53,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<PostCubit, PostState>(listener: (context, state) {
+    final ThemeData theme = Theme.of(context); // Get the current theme
+    final bool isDarkMode = theme.brightness == Brightness.dark;
 
-       if (state is PostUploadSuccess) {
+    return BlocConsumer<PostCubit, PostState>(listener: (context, state) {
+      if (state is PostUploadSuccess) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Post shared successfully!")),
         );
@@ -67,56 +69,59 @@ class _AddPostScreenState extends State<AddPostScreen> {
         );
       }
     }, builder: (context, state) {
-      if (state is PostLoading){
+      if (state is PostLoading) {
         return const Center(
           child: CircularProgressIndicator(),
         );
       }
+
       final postCubit = context.read<PostCubit>();
       final uid = FirebaseAuth.instance.currentUser!.uid;
       final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
       return Scaffold(
         appBar: AppBar(
-          iconTheme: const IconThemeData(color: Colors.black),
-          backgroundColor: Colors.white,
+          iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
+          backgroundColor: isDarkMode ? Colors.black : Colors.white,
           elevation: 0,
-          title: const Text(
+          title: Text(
             "New post",
-            style: TextStyle(color: Colors.black),
+            style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
           ),
           centerTitle: false,
           actions: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10.w),
               child: Center(
-                  child: GestureDetector(
-                    onTap: () async {
-                      // Fetch the user's username
-                      DocumentSnapshot userSnapshot =
-                      await _firestore.collection('users').doc(uid).get();
-                      String? username = userSnapshot['username'];
-                      String? userImage = userSnapshot['profilePhoto'];
+                child: GestureDetector(
+                  onTap: () async {
+                    // Fetch the user's username
+                    DocumentSnapshot userSnapshot =
+                    await _firestore.collection('users').doc(uid).get();
+                    String? username = userSnapshot['username'];
+                    String? userImage = userSnapshot['profilePhoto'];
 
-                      postCubit.uploadPost(
-                        uid: uid,
-                        mediaFiles:
-                        _pickedMedia.map((file) => File(file.path)).toList(),
-                        description: _descriptionController.text,
-                        username: username!,
-                        userImage: userImage!,
-                        mediaType: _videoController != null
-                            ? "video"
-                            : _pickedMedia.length > 1
-                            ? "carousel"
-                            : "image",
-                        location: 'ggg',
-                      );
-                    },
-                    child: Text(
-                      "Share",
-                      style: TextStyle(color: Colors.blue, fontSize: 15.sp),
-                    ),
-                  )),
+                    postCubit.uploadPost(
+                      uid: uid,
+                      mediaFiles:
+                      _pickedMedia.map((file) => File(file.path)).toList(),
+                      description: _descriptionController.text,
+                      username: username!,
+                      userImage: userImage!,
+                      mediaType: _videoController != null
+                          ? "video"
+                          : _pickedMedia.length > 1
+                          ? "carousel"
+                          : "image",
+                      location: 'ggg',
+                    );
+                  },
+                  child: Text(
+                    "Share",
+                    style: TextStyle(color: isDarkMode ? Colors.blueAccent : Colors.blue, fontSize: 15.sp),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
@@ -126,11 +131,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue, // Set button color based on theme
+                    foregroundColor: isDarkMode ? Colors.white : Colors.black, // Set text color based on theme
+                  ),
                   onPressed: () => _pickMedia(true),
                   child: const Text('Pick Images'),
                 ),
                 SizedBox(width: 10.w),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue, // Set button color based on theme
+                    foregroundColor: isDarkMode ? Colors.white : Colors.black, // Set text color based on theme
+                  ),
                   onPressed: () => _pickMedia(false),
                   child: const Text('Pick Video'),
                 ),
@@ -140,16 +153,18 @@ class _AddPostScreenState extends State<AddPostScreen> {
               padding: const EdgeInsets.all(8.0),
               child: TextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Enter a description',
+                  labelStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
+                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
               ),
             ),
             Expanded(
               child: _pickedMedia.isEmpty
-                  ? const Center(child: Text('No media selected'))
+                  ? Center(child: Text('No media selected', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)))
                   : GridView.builder(
                 itemCount: _pickedMedia.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(

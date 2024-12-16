@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:instagramclone/generated/l10n.dart';
 import '../../../logic/auth-cubit/auth_cubit.dart';
 
 class ProfilePhotoWidget extends StatefulWidget {
@@ -65,7 +66,7 @@ class _ProfilePhotoWidgetState extends State<ProfilePhotoWidget> {
               await authCubit.updateProfilePhoto();
             },
             child: Text(
-              "Change Profile Photo",
+              S.of(context).Change_Profile_photo,
               style: TextStyle(
                 fontSize: 13.sp,
                 color: const Color.fromRGBO(56, 151, 240, 1),

@@ -12,6 +12,15 @@ class CustomAppBarHomePage extends StatefulWidget {
 class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
   @override
   Widget build(BuildContext context) {
+    // Get the current theme (dark or light mode)
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Set the icon color based on the theme mode
+    final iconColor = isDarkMode ? Colors.white : Colors.black;
+    final logoImage = isDarkMode
+        ? "assets/images/instagram_text_logo_dark.png"  // Use a dark version of the logo
+        : "assets/images/instagram_text_logo.png";      // Use the default logo
+
     return Row(
       children: [
         SizedBox(
@@ -19,8 +28,9 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
           width: 150.w,
           child: Row(
             children: [
-              Image.asset("assets/images/instagram_text_logo.png"),
-              const Icon(Icons.keyboard_arrow_down),
+              // Apply color filter to the logo if needed
+              Image.asset(logoImage),
+              Icon(Icons.keyboard_arrow_down, color: iconColor), // Icon color based on theme
             ],
           ),
         ),
@@ -33,15 +43,16 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
               SizedBox(
                 width: 25.w,
               ),
-               Icon(
+              Icon(
                 Icons.favorite_border,
                 size: 30.sp,
+                color: iconColor,
               ),
               SizedBox(
                 width: 15.w,
               ),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -49,23 +60,35 @@ class _CustomAppBarHomePageState extends State<CustomAppBarHomePage> {
                     ),
                   );
                 },
-                child: Image.asset(
-                  "assets/images/Messenger_icon.png",
-                  width: 30.w,
-                  height: 30.h,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    iconColor.withOpacity(0.7), // Adjust opacity or color as needed
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    "assets/images/Messenger_icon.png",
+                    width: 30.w,
+                    height: 30.h,
+                  ),
                 ),
               ),
               SizedBox(
                 width: 15.w,
               ),
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   Navigator.pushNamed(context, "add");
                 },
-                child: Image.asset(
-                  "assets/images/add_icon.png",
-                  width: 30.w,
-                  height: 30.h,
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    iconColor.withOpacity(0.7), // Adjust opacity or color as needed
+                    BlendMode.srcIn,
+                  ),
+                  child: Image.asset(
+                    "assets/images/add_icon.png",
+                    width: 30.w,
+                    height: 30.h,
+                  ),
                 ),
               ),
             ],

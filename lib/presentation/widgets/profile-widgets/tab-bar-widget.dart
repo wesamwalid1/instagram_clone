@@ -29,51 +29,51 @@ class _TabBarProfilePageState extends State<TabBarProfilePage> {
       initialIndex: _selectedTabIndex,
       child: Column(
         children: [
-          TabBar(
-            indicatorColor: Colors.black87,
-            onTap: (index) {
-              setState(() {
-                _selectedTabIndex = index; // Update the selected tab index
-              });
-            },
-            tabs: [
-              Tab(
-                  icon: _selectedTabIndex == 0
-                      ? Image.asset("assets/images/parent_components.png")
-                      : Image.asset(
-                          "assets/images/iconsNotSelected/grid-not-select.png")),
-              Tab(
-                icon: _selectedTabIndex == 1
-                    ? Image.asset(
-                        "assets/images/reels-icon.png") // Selected state
-                    : Image.asset(
-                        "assets/images/iconsNotSelected/reels-not-select.png"), // Not selected state
-              ),
-              Tab(
-                  icon: _selectedTabIndex == 2
-                      ? Image.asset(
-                          "assets/images/mentions.png",
-                          width: 30.w,
-                          height: 30.h,
-                        )
-                      : Image.asset(
-                          "assets/images/iconsNotSelected/mentions-not-select.png")),
-            ],
-          ),
-          Expanded(
-            child: TabBarView(
-              children: [
-                _buildUserPostsGrid(), // First Tab: User's posts
-                Center(child: Text("Tab 2")), // Second Tab
-                Center(child: Text("Tab 3")), // Third Tab
-              ],
-            ),
-          ),
+          _buildTabBar(),
+          Expanded(child: _buildTabBarView()),
         ],
       ),
     );
   }
 
+  // TabBar widget to handle icon selection logic
+  TabBar _buildTabBar() {
+    return TabBar(
+      indicatorColor: Colors.black87,
+      onTap: (index) {
+        setState(() {
+          _selectedTabIndex = index; // Update the selected tab index
+        });
+      },
+      tabs: [
+        _buildTab(0, "assets/images/parent_components.png", "assets/images/iconsNotSelected/grid-not-select.png"),
+        _buildTab(1, "assets/images/reels-icon.png", "assets/images/iconsNotSelected/reels-not-select.png"),
+        _buildTab(2, "assets/images/mentions.png", "assets/images/iconsNotSelected/mentions-not-select.png"),
+      ],
+    );
+  }
+
+  // Helper method to build each tab with selected and non-selected icons
+  Tab _buildTab(int index, String selectedIcon, String unselectedIcon) {
+    return Tab(
+      icon: _selectedTabIndex == index
+          ? Image.asset(selectedIcon)
+          : Image.asset(unselectedIcon),
+    );
+  }
+
+  // TabBarView widget to display content based on selected tab
+  Widget _buildTabBarView() {
+    return TabBarView(
+      children: [
+        _buildUserPostsGrid(), // First Tab: User's posts
+        Center(child: Text("Reels Tab")), // Second Tab
+        Center(child: Text("Mentions Tab")), // Third Tab
+      ],
+    );
+  }
+
+  // Method to display the user's posts grid
   Widget _buildUserPostsGrid() {
     return BlocConsumer<PostCubit, PostState>(
       listener: (context, state) {
@@ -88,7 +88,6 @@ class _TabBarProfilePageState extends State<TabBarProfilePage> {
           return const Center(child: CircularProgressIndicator());
         } else if (state is PostLoadSuccess) {
           final posts = state.posts;
-          final username = state.posts[0].username;
 
           if (posts.isEmpty) {
             return Center(
@@ -100,19 +99,18 @@ class _TabBarProfilePageState extends State<TabBarProfilePage> {
           }
 
           return PostsGridViewWidget(
-            title: 'posts',
+            title: 'Posts',
             posts: posts,
-            username: username,
+            username: posts[0].username,
           );
         } else if (state is PostLoadFailure) {
           return const Center(
             child: Text("Failed to load posts"),
           );
         } else {
-          return const SizedBox();
+          return const SizedBox(); // Handle other states if necessary
         }
       },
     );
   }
 }
-

@@ -9,7 +9,7 @@ import '../../widgets/users-profile-widgets/users-info-widget.dart';
 import '../../widgets/users-profile-widgets/users-profile-data-widget.dart';
 
 class UsersProfileScreen extends StatefulWidget {
-  final UserModel user ;
+  final UserModel user;
   const UsersProfileScreen({super.key, required this.user});
 
   @override
@@ -19,37 +19,37 @@ class UsersProfileScreen extends StatefulWidget {
 class _UsersProfileScreenState extends State<UsersProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: isDarkMode ? Colors.black : Colors.white,  // Conditional background color
       body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
-              padding:  EdgeInsets.only(top: 45.h,left: 10.w,right: 10.w),
+              padding: EdgeInsets.only(top: 45.h, left: 10.w, right: 10.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomAppBarUsersProfile(user: widget.user,),
-                  SizedBox(height: 10.h,),
+                  CustomAppBarUsersProfile(user: widget.user),
+                  SizedBox(height: 10.h),
                   UsersProfileData(user: widget.user),
-                  SizedBox(height: 10.h,),
-                   UsersInfo(user: widget.user),
-                  UsersCustomButtons(user: widget.user,),
-                  SizedBox(height: 20.h,),
+                  SizedBox(height: 10.h),
+                  UsersInfo(user: widget.user),
+                  UsersCustomButtons(user: widget.user),
+                  SizedBox(height: 20.h),
                   const UsersHighLight(),
-
                 ],
               ),
-
             ),
-            SizedBox(height: 10.h,),
-            SizedBox(height:500.h,child:  UsersTabBar(user: widget.user,))
+            SizedBox(height: 10.h),
+            SizedBox(
+              height: 500.h,
+              child: UsersTabBar(user: widget.user),
+            ),
           ],
-
         ),
-
       ),
-
     );
   }
 }

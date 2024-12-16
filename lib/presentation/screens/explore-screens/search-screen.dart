@@ -41,7 +41,21 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the current theme (dark or light mode)
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+    // Set the background color based on the theme mode
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+
+    // Set text color based on the theme mode
+    final textColor = isDarkMode ? Colors.white : Colors.black;
+
+    // Set the input field decoration based on the theme mode
+    final inputFieldColor = isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300;
+    final borderColor = isDarkMode ? Colors.grey.shade600 : Colors.grey.shade300;
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: Padding(
         padding: EdgeInsets.only(top: 35.h, left: 10.w, right: 10.w),
         child: Column(
@@ -53,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   height: 35.h,
                   width: 276.w,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: inputFieldColor,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: TextField(
@@ -63,24 +77,23 @@ class _SearchScreenState extends State<SearchScreen> {
                     // Trigger search on text change
                     decoration: InputDecoration(
                       hintText: "Search",
-                      hintStyle: TextStyle(fontSize: 13.sp),
+                      hintStyle: TextStyle(fontSize: 13.sp, color: textColor),
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.r),
-                          borderSide: const BorderSide(color: Colors.red)),
+                          borderSide: BorderSide(color: borderColor)),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.grey
-                              .shade300, // Border color when TextField is enabled (but not focused)
+                          color: borderColor, // Border color when TextField is enabled (but not focused)
                         ),
                         borderRadius: BorderRadius.circular(8.0),
                       ),
                       focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.r),
-                          borderSide: BorderSide(color: Colors.grey.shade300)),
+                          borderSide: BorderSide(color: borderColor)),
                       contentPadding: EdgeInsets.symmetric(vertical: 13.h),
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search_rounded,
-                        color: Colors.black,
+                        color: textColor,
                       ),
                     ),
                   ),
@@ -91,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   },
                   child: Text(
                     "Cancel",
-                    style: TextStyle(fontSize: 10.sp, color: Colors.black),
+                    style: TextStyle(fontSize: 10.sp, color: textColor),
                   ),
                 ),
               ],
@@ -105,7 +118,12 @@ class _SearchScreenState extends State<SearchScreen> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is AuthSearchResults) {
                   if (state.searchResults.isEmpty) {
-                    return const Center(child: Text("No users found"));
+                    return Center(
+                      child: Text(
+                        "No users found",
+                        style: TextStyle(fontSize: 18.sp, color: textColor),
+                      ),
+                    );
                   }
                   return Expanded(
                     child: ListView.builder(
@@ -113,8 +131,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       itemBuilder: (context, index) {
                         final user = state.searchResults[index];
                         return ListTile(
-                          title: Text(user.username!),
-                          subtitle: Text(user.name ?? 'No Name'),
+                          title: Text(user.username!, style: TextStyle(color: textColor)),
+                          subtitle: Text(user.name ?? 'No Name', style: TextStyle(color: textColor)),
                           leading: CircleAvatar(
                             backgroundImage: user.profilePhoto != null
                                 ? NetworkImage(user.profilePhoto!)
@@ -125,15 +143,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => UsersProfileScreen(
-                                          user: user,
-                                        )));
+                                      user: user,
+                                    )));
                           },
                         );
                       },
                     ),
                   );
                 } else if (state is AuthFailure) {
-                  return Center(child: Text("Error: ${state.error}"));
+                  return Center(child: Text("Error: ${state.error}", style: TextStyle(color: textColor)));
                 }
                 return const SizedBox(); // Placeholder when no results
               },

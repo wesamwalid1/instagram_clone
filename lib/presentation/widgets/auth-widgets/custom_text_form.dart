@@ -10,24 +10,31 @@ class CustomTextForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
       obscureText: obscureText,
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: const Color.fromRGBO(217, 217, 217, 1), width: 2.0.w)),
+            borderSide: BorderSide(
+                color: isDarkMode ? Colors.white54 : const Color.fromRGBO(217, 217, 217, 1),
+                width: 2.0.w)),
         focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.black, width: 2.0.w)),
-        errorBorder:OutlineInputBorder(
+            borderSide: BorderSide(
+                color: isDarkMode ? Colors.white : Colors.black, width: 2.0.w)),
+        errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.red, width: 2.0.w)) ,
+            borderSide: BorderSide(color: Colors.red, width: 2.0.w)),
         hintText: hint,
-        fillColor: const Color.fromRGBO(217, 217, 217, 1),
+        hintStyle: TextStyle(
+          color: isDarkMode ? Colors.white70 : Colors.black54, // Adjust hint color based on theme
+        ),
+        fillColor: isDarkMode ? Colors.grey[800] : const Color.fromRGBO(217, 217, 217, 1),
         filled: true,
       ),
       controller: controller,
     );
-
   }
 }

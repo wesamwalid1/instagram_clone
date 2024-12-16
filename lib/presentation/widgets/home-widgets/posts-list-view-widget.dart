@@ -21,7 +21,6 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
   int _visibleIndex = 0;
   final Map<int, PageController> _pageControllers = {};
 
-
   @override
   void initState() {
     super.initState();
@@ -75,7 +74,7 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(right: 10,left: 10),
+                      padding: const EdgeInsets.only(right: 10, left: 10),
                       child: Row(
                         children: [
                           CircleAvatar(
@@ -94,50 +93,65 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
                               Text(
                                 post.username!.toString(),
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.sp),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12.sp,
+                                  color: Theme.of(context).brightness == Brightness.light
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                               Text(
                                 post.location!,
-                                style: TextStyle(fontSize: 11.sp),
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  color: Theme.of(context).brightness == Brightness.light
+                                      ? Colors.black
+                                      : Colors.white,
+                                ),
                               ),
                             ],
                           ),
                           const Spacer(),
-                          const Icon(Icons.more_horiz),
+                          Icon(
+                            Icons.more_horiz,
+                            color: Theme.of(context).brightness == Brightness.light
+                                ? Colors.black
+                                : Colors.white,
+                          ),
                         ],
                       ),
                     ),
                     SizedBox(height: 10.h),
                     GestureDetector(
-                        onDoubleTap: () {
-                          setState(() {
-                            context.read<PostCubit>().toggleLikePost(post, uid);
-                          });
-                        },
-                        child: post.mediaType! == 'video'
-                            ? VideoPlayerWidget(
-                          url: post.mediaUrls!.first,
-                          isVisible: _visibleIndex == index,
-                        )
-                            : post.mediaType! == 'carousel'
-                            ? SizedBox(
-                          height: 390.h, // Adjust height as needed
-                          child: PageView.builder(
-                            controller: _pageControllers[index],
-                            itemCount: post.mediaUrls!.length,
-                            itemBuilder: (context, carouselIndex) {
-                              return Image.network(
-                                post.mediaUrls![carouselIndex],
-                                fit: BoxFit.cover,
-                              );
-                            },
-                          ),
-                        )
-                            : Image.network(
-                          post.mediaUrls!.first,
-                          fit: BoxFit.cover,
-                        )),
+                      onDoubleTap: () {
+                        setState(() {
+                          context.read<PostCubit>().toggleLikePost(post, uid);
+                        });
+                      },
+                      child: post.mediaType! == 'video'
+                          ? VideoPlayerWidget(
+                        url: post.mediaUrls!.first,
+                        isVisible: _visibleIndex == index,
+                      )
+                          : post.mediaType! == 'carousel'
+                          ? SizedBox(
+                        height: 390.h, // Adjust height as needed
+                        child: PageView.builder(
+                          controller: _pageControllers[index],
+                          itemCount: post.mediaUrls!.length,
+                          itemBuilder: (context, carouselIndex) {
+                            return Image.network(
+                              post.mediaUrls![carouselIndex],
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      )
+                          : Image.network(
+                        post.mediaUrls!.first,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                     SizedBox(height: 10.h),
                     if (post.mediaUrls!.length > 1)
                       Center(
@@ -150,20 +164,21 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
                               builder: (context, _) {
                                 int currentPage = _pageControllers[index]!
                                     .hasClients
-                                    ? _pageControllers[index]!.page?.round() ??
-                                    0
+                                    ? _pageControllers[index]!.page?.round() ?? 0
                                     : 0;
                                 bool isActive = currentPage == dotIndex;
                                 return Padding(
-                                  padding:
-                                  EdgeInsets.symmetric(horizontal: 4.w),
+                                  padding: EdgeInsets.symmetric(horizontal: 4.w),
                                   child: Container(
                                     width: isActive ? 10.w : 6.w,
                                     height: 6.h,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color:
-                                      isActive ? Colors.blue : Colors.grey,
+                                      color: isActive
+                                          ? Colors.blue
+                                          : Theme.of(context).brightness == Brightness.light
+                                          ? Colors.black
+                                          : Colors.white,
                                     ),
                                   ),
                                 );
@@ -179,13 +194,11 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
                         setState(() {
                           cubit.toggleLikePost(post, uid);
                         });
-                      }, onFavoriteToggle: () async{
-                      await cubit.toggleFavoritePost(post);
-                      setState(() {
-
-                      });
-
-                    },
+                      },
+                      onFavoriteToggle: () async {
+                        await cubit.toggleFavoritePost(post);
+                        setState(() {});
+                      },
                     ),
                     PostLikesCount(post: post),
                     PostDescription(post: post),
@@ -207,13 +220,11 @@ class _CustomPostsListviewState extends State<CustomPostsListview> {
   }
 }
 
-
 class VideoPlayerWidget extends StatefulWidget {
   final String url;
   final bool isVisible; // Add this parameter
 
-  const VideoPlayerWidget(
-      {Key? key, required this.url, required this.isVisible})
+  const VideoPlayerWidget({Key? key, required this.url, required this.isVisible})
       : super(key: key);
 
   @override
@@ -228,8 +239,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.initState();
     _controller = VideoPlayerController.network(widget.url)
       ..initialize().then((_) {
-        setState(
-                () {}); // Ensure the first frame is shown after the video is initialized
+        setState(() {}); // Ensure the first frame is shown after the video is initialized
       });
   }
 
@@ -334,18 +344,19 @@ class _PostActionsState extends State<PostActions> {
           Spacer(),
           // Save button
           GestureDetector(
-              child: Icon(
-                widget.post.isSaved ? Icons.bookmark : Icons.bookmark_border,
-                color: widget.post.isSaved
-                    ? Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white
-                    : Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-                size: 30.sp,
-              ),
-              onTap: widget.onFavoriteToggle),
+            child: Icon(
+              widget.post.isSaved ? Icons.bookmark : Icons.bookmark_border,
+              color: widget.post.isSaved
+                  ? Theme.of(context).brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white
+                  : Theme.of(context).brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white,
+              size: 30.sp,
+            ),
+            onTap: widget.onFavoriteToggle,
+          ),
         ],
       ),
     );

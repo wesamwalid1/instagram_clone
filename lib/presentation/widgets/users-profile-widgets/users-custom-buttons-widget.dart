@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../data/models/auth-model.dart';
 import '../../../logic/auth-cubit/auth_cubit.dart';
 
-
 class UsersCustomButtons extends StatefulWidget {
   final UserModel user;
   const UsersCustomButtons({super.key, required this.user});
@@ -65,6 +64,7 @@ class _UsersCustomButtonsState extends State<UsersCustomButtons> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         GestureDetector(
@@ -94,40 +94,52 @@ class _UsersCustomButtonsState extends State<UsersCustomButtons> {
             Container(
               height: 30.h,
               width: 95.w,
-              color: const Color.fromRGBO(239, 239, 239, 1),
+              color: isDarkMode ? Colors.grey[700] : const Color.fromRGBO(239, 239, 239, 1),
               child: Center(
                 child: Text(
                   "Message",
-                  style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             ),
             Container(
               height: 30.h,
               width: 95.w,
-              color: const Color.fromRGBO(239, 239, 239, 1),
+              color: isDarkMode ? Colors.grey[700] : const Color.fromRGBO(239, 239, 239, 1),
               child: Center(
                 child: Text(
                   "Subscribe",
-                  style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             ),
             Container(
               height: 30.h,
               width: 95.w,
-              color: const Color.fromRGBO(239, 239, 239, 1),
+              color: isDarkMode ? Colors.grey[700] : const Color.fromRGBO(239, 239, 239, 1),
               child: Center(
                 child: Text(
                   "Contact",
-                  style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             ),
             Container(
               height: 30.h,
               width: 32.w,
-              color: const Color.fromRGBO(239, 239, 239, 1),
+              color: isDarkMode ? Colors.grey[700] : const Color.fromRGBO(239, 239, 239, 1),
               child: Image.asset(
                 "assets/images/add-people-icon.png",
               ),

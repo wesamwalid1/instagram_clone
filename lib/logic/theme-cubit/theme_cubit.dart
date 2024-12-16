@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeCubit extends HydratedCubit<ThemeMode> {
-  ThemeCubit() : super(ThemeMode.system);
+class ThemeCubit extends Cubit<ThemeData> {
+  ThemeCubit() : super(_lightTheme);
 
-  // Takes the theme mode that we passed to it and changes the theme to light or dark mode
-  void updateTheme(ThemeMode themeMode) => emit(themeMode);
+  static final ThemeData _lightTheme = ThemeData.light().copyWith(
+    primaryColor: Colors.blue,
+    scaffoldBackgroundColor: Colors.white,
+  );
 
-  @override
-  ThemeMode? fromJson(Map<String, dynamic> json) {
-    // Deserialize the theme mode from JSON
-    final themeString = json['theme'] as String?;
-    if (themeString == null) {
-      return ThemeMode.system; // Default if no theme is found
-    }
-    switch (themeString) {
-      case 'ThemeMode.light':
-        return ThemeMode.light;
-      case 'ThemeMode.dark':
-        return ThemeMode.dark;
-      default:
-        return ThemeMode.system;
-    }
+  static final ThemeData _darkTheme = ThemeData.dark().copyWith(
+    primaryColor: Colors.black,
+    scaffoldBackgroundColor: Colors.grey[900],
+  );
+
+  void toggleTheme(bool isDark) async {
+    emit(isDark ? _darkTheme : _lightTheme);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isDarkMode', isDark);
   }
 
-  @override
-  Map<String, dynamic>? toJson(ThemeMode state) {
-    // Serialize the current theme mode to JSON
-    return {
-      'theme': state.toString(), // Convert the ThemeMode to a string
-    };
+  bool get isDarkTheme => state == _darkTheme;
+
+  Future<void> loadTheme() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isDarkMode = prefs.getBool('isDarkMode') ?? false;
+    emit(isDarkMode ? _darkTheme : _lightTheme);
   }
 }
+

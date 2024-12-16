@@ -12,7 +12,6 @@ class AddScreen extends StatefulWidget {
 
 class _AddScreenState extends State<AddScreen> {
   late PageController pageController;
-
   int _currentIndex = 0;
 
   @override
@@ -39,7 +38,14 @@ class _AddScreenState extends State<AddScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDarkMode ? Colors.black : Colors.white;
+    final buttonColor = isDarkMode ? Colors.white : Colors.black.withOpacity(0.6);
+    final textColor = isDarkMode ? Colors.black : Colors.white;
+    final selectedButtonColor = Colors.grey; // Color for selected button
+
     return Scaffold(
+      backgroundColor: backgroundColor,
       body: SafeArea(
         child: Stack(
           alignment: Alignment.bottomCenter,
@@ -48,9 +54,7 @@ class _AddScreenState extends State<AddScreen> {
               controller: pageController,
               onPageChanged: onPageChange,
               children: [
-                //const AddPostScreen(),
-                //AddReelsScreen(),
-               AddPostScreen(),
+                AddPostScreen(),
                 AddStoryScreen(),
               ],
             ),
@@ -62,35 +66,40 @@ class _AddScreenState extends State<AddScreen> {
                 width: 200.w,
                 height: 30.h,
                 decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.6),
-                    borderRadius: BorderRadius.circular(20.r)),
+                  color: buttonColor,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         navigationTapped(0);
                       },
                       child: Text(
                         "Post",
                         style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color:
-                                _currentIndex == 0 ? Colors.white : Colors.grey),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: _currentIndex == 0
+                              ? selectedButtonColor // Gray when selected
+                              : textColor,
+                        ),
                       ),
                     ),
                     GestureDetector(
-                      onTap: (){
-                        navigationTapped(2);
+                      onTap: () {
+                        navigationTapped(1);
                       },
                       child: Text(
                         "Story",
                         style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w500,
-                            color:
-                            _currentIndex == 1 ? Colors.white : Colors.grey),
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.w500,
+                          color: _currentIndex == 1
+                              ? selectedButtonColor // Gray when selected
+                              : textColor,
+                        ),
                       ),
                     ),
                   ],

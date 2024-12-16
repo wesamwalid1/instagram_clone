@@ -1,19 +1,21 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:instagramclone/core/theme/app_theme.dart';
+import 'package:instagramclone/generated/l10n.dart';
 import 'package:instagramclone/logic/chat-cubit/chat_cubit.dart';
 import 'package:instagramclone/logic/post-cubit/post_cubit.dart';
 import 'package:instagramclone/logic/theme-cubit/theme_cubit.dart';
+import 'package:instagramclone/logic/language-cubit/language_cubit.dart'; // Add LanguageCubit
 import 'package:instagramclone/presentation/screens/chat-screens/search-user-screen.dart';
 import 'package:instagramclone/presentation/screens/home-screens/add-screen.dart';
 import 'package:instagramclone/presentation/screens/home-screens/home-screen.dart';
 import 'package:instagramclone/presentation/screens/profile-screens/edit-profile-screen.dart';
+import 'package:instagramclone/presentation/screens/profile-screens/language-screen.dart';
 import 'package:instagramclone/presentation/screens/profile-screens/profile-screen.dart';
 import 'package:instagramclone/presentation/screens/profile-screens/settings-screen.dart';
 import 'package:instagramclone/shared/bottom-navigation-bar.dart';
@@ -42,7 +44,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     var cache = CacheHelper();
@@ -58,17 +59,26 @@ class MyApp extends StatelessWidget {
               BlocProvider(create: (context) => PostCubit()),
               BlocProvider(create: (context) => ThemeCubit()),
               BlocProvider(create: (context) => StoryCubit()),
-              BlocProvider(create: (context) => ChatCubit())
+              BlocProvider(create: (context) => ChatCubit()),
+              BlocProvider(create: (context) => LanguageCubit()), // Add LanguageCubit
             ],
-            child: BlocBuilder<ThemeCubit, ThemeMode>(
-                builder: (context, mode) => MaterialApp(
+            child: BlocBuilder<ThemeCubit, ThemeData>(
+              builder: (context, theme) {
+                return BlocBuilder<LanguageCubit, Locale>(
+                  builder: (context, locale) {
+                    return MaterialApp(
+                      locale: locale,
+                      localizationsDelegates: const [
+                        S.delegate,
+                        GlobalMaterialLocalizations.delegate,
+                        GlobalWidgetsLocalizations.delegate,
+                        GlobalCupertinoLocalizations.delegate,
+                      ],
+                      supportedLocales: S.delegate.supportedLocales,
                       debugShowCheckedModeBanner: false,
-                      themeMode: mode,
-                      darkTheme: AppTheme.DarkTheme,
-                      theme: AppTheme.lightTheme,
+                      //darkTheme: AppTheme.DarkTheme,
+                      theme: theme,
                       initialRoute: token != null ? "main_screen" : "login",
-                      // initialRoute: "profile",
-
                       routes: {
                         "login": (context) => const LoginScreen(),
                         "register": (context) => const RegisterScreen(),
@@ -77,12 +87,16 @@ class MyApp extends StatelessWidget {
                         "profile": (context) => const ProfileScreen(),
                         "add": (context) => const AddScreen(),
                         "edit_profile": (context) => const EditProfileScreen(),
-                        //"users_profile": (context) => const UsersProfileScreen(),
                         "settings": (context) => const SettingsScreen(),
-                        //"details" : (context) =>  DetailsScreen()
-                        'searchUserScreen':(context)=>const DirectSearchUsersScreen()
+                        'searchUserScreen': (context) =>
+                        const DirectSearchUsersScreen(),
+                        "language": (context) => LanguageScreen(), // Add route for LanguageScreen
                       },
-                    )),
+                    );
+                  },
+                );
+              },
+            ),
           );
         });
   }

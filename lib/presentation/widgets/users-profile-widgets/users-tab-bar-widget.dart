@@ -27,12 +27,15 @@ class _UsersTabBarState extends State<UsersTabBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return DefaultTabController(
-        initialIndex: _selectedTabIndex,
-        length: 3,
-        child: Column(children: [
+      initialIndex: _selectedTabIndex,
+      length: 3,
+      child: Column(
+        children: [
           TabBar(
-            indicatorColor: Colors.black87,
+            indicatorColor: isDarkMode ? Colors.white : Colors.black87,
             onTap: (index) {
               setState(() {
                 _selectedTabIndex = index; // Update the selected tab index
@@ -40,45 +43,50 @@ class _UsersTabBarState extends State<UsersTabBar> {
             },
             tabs: [
               Tab(
-                  icon: _selectedTabIndex == 0
-                      ? Image.asset("assets/images/parent_components.png")
-                      : Image.asset(
-                          "assets/images/iconsNotSelected/grid-not-select.png")),
+                icon: _selectedTabIndex == 0
+                    ? Image.asset("assets/images/parent_components.png")
+                    : Image.asset(
+                    "assets/images/iconsNotSelected/grid-not-select.png"),
+              ),
               Tab(
                 icon: _selectedTabIndex == 1
-                    ? Image.asset(
-                        "assets/images/reels-icon.png") // Selected state
+                    ? Image.asset("assets/images/reels-icon.png") // Selected state
                     : Image.asset(
-                        "assets/images/iconsNotSelected/reels-not-select.png"), // Not selected state
+                    "assets/images/iconsNotSelected/reels-not-select.png"), // Not selected state
               ),
               Tab(
-                  icon: _selectedTabIndex == 2
-                      ? Image.asset(
-                          "assets/images/mentions.png",
-                          width: 30.w,
-                          height: 30.h,
-                        )
-                      : Image.asset(
-                          "assets/images/iconsNotSelected/mentions-not-select.png")),
+                icon: _selectedTabIndex == 2
+                    ? Image.asset(
+                  "assets/images/mentions.png",
+                  width: 30.w,
+                  height: 30.h,
+                )
+                    : Image.asset(
+                    "assets/images/iconsNotSelected/mentions-not-select.png"),
+              ),
             ],
           ),
-           Expanded(
-            child: TabBarView(children: [
-              _buildUserPostsGrid(),
-              const Center(
-                child: Text("Tab 2"),
-              ),
-              const Center(
-                child: Text("Tab 3"),
-              )
-            ]),
+          Expanded(
+            child: TabBarView(
+              children: [
+                _buildUserPostsGrid(),
+                const Center(
+                  child: Text("Tab 2"),
+                ),
+                const Center(
+                  child: Text("Tab 3"),
+                ),
+              ],
+            ),
           ),
-        ]));
+        ],
+      ),
+    );
   }
 }
 
 Widget _buildUserPostsGrid() {
-  return  BlocConsumer<PostCubit, PostState>(
+  return BlocConsumer<PostCubit, PostState>(
     listener: (context, state) {
       if (state is PostLoadFailure) {
         ScaffoldMessenger.of(context).showSnackBar(
