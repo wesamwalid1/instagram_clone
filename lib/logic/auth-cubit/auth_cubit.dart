@@ -24,10 +24,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> login(String email, String password) async {
     try {
       emit(AuthLoading());
-      await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+
       DocumentSnapshot doc = await _firestore
           .collection('users')
           .doc(_auth.currentUser!.uid)
@@ -35,11 +33,13 @@ class AuthCubit extends Cubit<AuthState> {
 
       String token = doc.get('uid') as String;
       await cache.setData(key: 'auth_token', value: token);
-      emit(AuthSuccess(_auth.currentUser!));
+
+      emit(AuthLoginSuccess(_auth.currentUser!));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
   }
+
 
   Future<void> register(String username, String email, String password) async {
     try {
@@ -57,7 +57,14 @@ class AuthCubit extends Cubit<AuthState> {
           bio: "",
           email: email,
           phone: "",
-          gender: "");
+          gender: "",
+          participants: [],
+          followingCount: 0,
+          followersCount: 0,
+          followers: [],
+          postsCount: 0,
+          following: []
+      );
 
       // Store user data in Firestore
       await _firestore
@@ -65,11 +72,12 @@ class AuthCubit extends Cubit<AuthState> {
           .doc(userModel.uid)
           .set(userModel.toMap());
 
-      emit(AuthSuccess(userCredential.user!));
+      emit(AuthRegisterSuccess(userCredential.user!));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
   }
+
 
   Future<void> signOut() async {
     await cache.deleteData(key: 'auth_token');
@@ -103,7 +111,8 @@ class AuthCubit extends Cubit<AuthState> {
         'website': website,
       });
       // Fetch and update all posts by this user in the 'posts' collection
-      final userPostsQuery = await _firestore.collection('posts')
+      final userPostsQuery = await _firestore
+          .collection('posts')
           .where('uid', isEqualTo: uid)
           .get();
 
@@ -112,7 +121,6 @@ class AuthCubit extends Cubit<AuthState> {
           'username': username,
         });
       }
-
 
       // Fetch updated user data and emit success state
       await fetchUserInfo(uid);
@@ -149,7 +157,8 @@ class AuthCubit extends Cubit<AuthState> {
         'profilePhoto': photoUrl,
       });
       // Fetch and update all posts by this user in the 'posts' collection
-      final userPostsQuery = await _firestore.collection('posts')
+      final userPostsQuery = await _firestore
+          .collection('posts')
           .where('uid', isEqualTo: uid)
           .get();
 
@@ -172,22 +181,23 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       emit(AuthLoading());
 
-
-      // Fetch user data from Firestore
+      // Fetch user data from Firestore once
       final userDoc = await _firestore.collection('users').doc(uid).get();
 
       if (userDoc.exists) {
         UserModel userModel = UserModel.fromMap(userDoc.data()!);
 
-        // Emit success state with user and userModel
+        // Emit success state with updated user data
         emit(AuthSuccess(_auth.currentUser!, userModel: userModel));
       } else {
         emit(AuthFailure("User data not found"));
       }
-        } catch (e) {
+    } catch (e) {
       emit(AuthFailure(e.toString()));
     }
   }
+
+
 
   Future<void> searchUsers(String query, String currentUserUid) async {
     try {
@@ -208,7 +218,9 @@ class AuthCubit extends Cubit<AuthState> {
 
       // Map query results into a list of UserModel and exclude the current user
       final searchResults = querySnapshot.docs
-          .where((doc) => doc.data()['uid'] != currentUserUid) // Exclude current user's account
+          .where((doc) =>
+              doc.data()['uid'] !=
+              currentUserUid) // Exclude current user's account
           .map((doc) {
         return UserModel.fromMap(doc.data());
       }).toList();
@@ -231,13 +243,14 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
       // Fetch current user data
-      DocumentSnapshot currentUserDoc = await _firestore.collection('users').doc(currentUserUid).get();
-      UserModel currentUserModel = UserModel.fromMap(
-          currentUserDoc.data() as Map<String, dynamic>
-      );
+      DocumentSnapshot currentUserDoc =
+          await _firestore.collection('users').doc(currentUserUid).get();
+      UserModel currentUserModel =
+          UserModel.fromMap(currentUserDoc.data() as Map<String, dynamic>);
 
       // Check if already following, toggle action
-      bool isFollowing = currentUserModel.following?.contains(targetUser.uid) ?? false;
+      bool isFollowing =
+          currentUserModel.following?.contains(targetUser.uid) ?? false;
 
       if (isFollowing) {
         // Unfollow logic
@@ -250,7 +263,6 @@ class AuthCubit extends Cubit<AuthState> {
           'followers': FieldValue.arrayRemove([currentUserUid]),
           'followersCount': FieldValue.increment(-1),
         });
-
       } else {
         // Follow logic
         await _firestore.collection('users').doc(currentUserUid).update({
@@ -274,8 +286,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-
-
   Future<void> fetchAllUsers() async {
     emit(FetchUsersLoading()); // Emit loading state
 
@@ -298,7 +308,6 @@ class AuthCubit extends Cubit<AuthState> {
           'Failed to fetch users: ${e.toString()}')); // Emit error state
     }
   }
-
 
 
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:video_player/video_player.dart';
 import '../../../data/models/auth-model.dart';
 import '../../../logic/post-cubit/post_cubit.dart';
 import '../../../shared/widgets/posts-grid-view-widget.dart';
@@ -95,11 +94,15 @@ Widget _buildUserPostsGrid() {
       }
     },
     builder: (context, state) {
+      var username='';
       if (state is PostLoading) {
         return const Center(child: CircularProgressIndicator());
       } else if (state is PostLoadSuccess) {
         final posts = state.posts;
-        final username = state.posts[0].username;
+        if(posts.isNotEmpty){
+           username = state.posts[0].username!;
+        }
+
 
         if (posts.isEmpty) {
           return Center(
@@ -113,7 +116,7 @@ Widget _buildUserPostsGrid() {
         return PostsGridViewWidget(
           title: 'posts',
           posts: posts,
-          username: username,
+          username: "username",
         );
       } else if (state is PostLoadFailure) {
         return const Center(

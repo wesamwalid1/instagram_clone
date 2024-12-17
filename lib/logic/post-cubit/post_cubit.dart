@@ -46,10 +46,12 @@ class PostCubit extends Cubit<PostState> {
         likes: [],
       );
 
-      // Save to Firestore
+      // Save post to Firestore in 'posts' collection
       await FirebaseFirestore.instance.collection('posts').doc(postId).set({
         ...post.toMap(),
       });
+
+      // Save post to user's 'userPosts' subcollection
       await FirebaseFirestore.instance
           .collection('users')
           .doc(uid)
@@ -57,13 +59,17 @@ class PostCubit extends Cubit<PostState> {
           .doc(postId)
           .set({...post.toMap()});
 
-
+      // Increment postsCount in the 'users' collection
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'postsCount': FieldValue.increment(1),
+      });
 
       emit(PostUploadSuccess(mediaUrls.join(", ")));
     } catch (e) {
       emit(PostUploadFailure(e.toString()));
     }
   }
+
 
   Future<String> _uploadMediaToStorage(String uid, File mediaFile) async {
     try {
@@ -134,10 +140,16 @@ class PostCubit extends Cubit<PostState> {
       final userModel = UserModel.fromMap(userDoc.data()!);
       print('Following list: ${userModel.following}'); // Debugging line
 
+      // If no following, emit failure once
       if (userModel.following == null || userModel.following!.isEmpty) {
-        emit(PostLoadFailure("You are not following anyone."));
-        return;
+        // Check if the failure state has already been emitted
+        final currentState = state;
+        if (currentState is! PostLoadFailure || currentState.error != "You are not following anyone.") {
+          emit(PostLoadFailure("You are not following anyone."));
+        }
+        return; // Only emit the failure state once
       }
+
       List<String> followedUserIds = userModel.following!;
 
       // Ensure that the list has less than or equal to 10 items before using the 'whereIn' query
@@ -154,6 +166,8 @@ class PostCubit extends Cubit<PostState> {
       emit(PostLoadFailure("Failed to load posts: $e"));
     }
   }
+
+
 
   Future<void> _loadPostsForChunk(List<String> followedUserIds) async {
     try {

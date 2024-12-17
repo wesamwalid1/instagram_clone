@@ -69,7 +69,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
         );
       }
     }, builder: (context, state) {
-      if (state is PostLoading) {
+      if (state is PostUploading) {
         return const Center(
           child: CircularProgressIndicator(),
         );
@@ -79,7 +79,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
       final uid = FirebaseAuth.instance.currentUser!.uid;
       final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-      return Scaffold(
+      return  Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: isDarkMode ? Colors.white : Colors.black),
           backgroundColor: isDarkMode ? Colors.black : Colors.white,
@@ -118,22 +118,27 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   },
                   child: Text(
                     "Share",
-                    style: TextStyle(color: isDarkMode ? Colors.blueAccent : Colors.blue, fontSize: 15.sp),
+                    style: TextStyle(
+                        color: isDarkMode ? Colors.blueAccent : Colors.blue,
+                        fontSize: 15.sp),
                   ),
                 ),
               ),
             ),
           ],
         ),
-        body: Column(
+        body: state is PostLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue, // Set button color based on theme
-                    foregroundColor: isDarkMode ? Colors.white : Colors.black, // Set text color based on theme
+                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue,
+                    foregroundColor:
+                    isDarkMode ? Colors.white : Colors.black,
                   ),
                   onPressed: () => _pickMedia(true),
                   child: const Text('Pick Images'),
@@ -141,8 +146,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 SizedBox(width: 10.w),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue, // Set button color based on theme
-                    foregroundColor: isDarkMode ? Colors.white : Colors.black, // Set text color based on theme
+                    backgroundColor: isDarkMode ? Colors.blueGrey : Colors.blue,
+                    foregroundColor:
+                    isDarkMode ? Colors.white : Colors.black,
                   ),
                   onPressed: () => _pickMedia(false),
                   child: const Text('Pick Video'),
@@ -155,19 +161,27 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 controller: _descriptionController,
                 decoration: InputDecoration(
                   labelText: 'Enter a description',
-                  labelStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                  labelStyle: TextStyle(
+                      color: isDarkMode ? Colors.white : Colors.black),
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 3,
-                style: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
+                style: TextStyle(
+                    color: isDarkMode ? Colors.white : Colors.black),
               ),
             ),
             Expanded(
               child: _pickedMedia.isEmpty
-                  ? Center(child: Text('No media selected', style: TextStyle(color: isDarkMode ? Colors.white : Colors.black)))
+                  ? Center(
+                  child: Text('No media selected',
+                      style: TextStyle(
+                          color: isDarkMode
+                              ? Colors.white
+                              : Colors.black)))
                   : GridView.builder(
                 itemCount: _pickedMedia.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: _videoController != null ? 1 : 3,
                   crossAxisSpacing: 4.0,
                   mainAxisSpacing: 4.0,
@@ -175,7 +189,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 itemBuilder: (context, index) {
                   if (_videoController != null && index == 0) {
                     return AspectRatio(
-                      aspectRatio: _videoController!.value.aspectRatio,
+                      aspectRatio:
+                      _videoController!.value.aspectRatio,
                       child: VideoPlayer(_videoController!),
                     );
                   } else {
@@ -190,6 +205,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
           ],
         ),
       );
+
     });
   }
 }

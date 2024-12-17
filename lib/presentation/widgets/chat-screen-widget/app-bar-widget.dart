@@ -51,7 +51,7 @@ class _ChatAppBarWidgetState extends State<ChatAppBarWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, 'mainScreen');
+                  Navigator.pushReplacementNamed(context, 'main_screen');
                 },
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,

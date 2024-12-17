@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:instagramclone/logic/auth-cubit/auth_cubit.dart';
+import 'package:instagramclone/presentation/screens/auth-screens/login-screen.dart';
 import '../../widgets/auth-widgets/custom_text_form.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -76,7 +77,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               passwordInput.isNotEmpty &&
                               cPasswordInput.isNotEmpty) {
                             if (passwordInput == cPasswordInput) {
-                              cubit.register(usernameInput, emailInput, passwordInput);
+                              await cubit.register(usernameInput, emailInput, passwordInput);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text("Password does not match")),
@@ -119,16 +120,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
           );
         }, listener: (context, state) {
-      if (state is AuthSuccess) {
-        Navigator.pushReplacementNamed(context, "login");
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("done")),
+      if (state is AuthRegisterSuccess) {
+        // Navigate to LoginScreen after successful registration
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Registration Successful! Please log in.")),
         );
       } else if (state is AuthFailure) {
+        // Show error message on registration failure
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('error')),
+          SnackBar(content: Text(state.error)),
         );
       }
-    });
+    }
+    );
   }
 }

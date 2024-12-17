@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../logic/auth-cubit/auth_cubit.dart';
 import '../../widgets/auth-widgets/custom_text_form.dart';
+import 'package:instagramclone/generated/l10n.dart'; // Import the generated localization class
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,12 +47,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Image.asset(logoImage),  // Update the logo image based on the theme
                   ),
                   SizedBox(height: 25.h),
-                  // Username section
+                  // Email section
                   SizedBox(
                     height: 56.h,
                     width: 400.w,
                     child: CustomTextForm(
-                      hint: "Email",
+                      hint: S.of(context).Email,  // Localized string for "Email"
                       controller: email,
                     ),
                   ),
@@ -61,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 56.h,
                     width: 400.w,
                     child: CustomTextForm(
-                      hint: "Password",
+                      hint: S.of(context).Password,  // Localized string for "Password"
                       controller: pass,
                       obscureText: true,
                     ),
@@ -81,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 await cubit.login(emailInput, passwordInput);
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text("Please fill in all fields")),
+                                  SnackBar(content: Text(S.of(context).Please_fill_in_all_fields)),  // Localized string for "Please fill in all fields"
                                 );
                               }
                             },
@@ -92,19 +93,19 @@ class _LoginScreenState extends State<LoginScreen> {
                               minimumSize: Size(400.w, 45.h),
                             ),
                             child: Text(
-                              "Login",
+                              S.of(context).Login,  // Localized string for "Login"
                               style: TextStyle(color: textColor),
                             )),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("Do not have an email?"),
+                            Text(S.of(context).Do_not_have_an_email),  // Localized string for "Do not have an email?"
                             TextButton(
                               onPressed: () {
                                 Navigator.pushNamed(context, "register");
                               },
                               child: Text(
-                                "Register.",
+                                S.of(context).Register,  // Localized string for "Register"
                                 style: TextStyle(color: textColor),
                               ),
                             )
@@ -120,9 +121,14 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
       listener: (context, state) {
-        if (state is AuthSuccess) {
+        if (state is AuthLoginSuccess) {
+          // Navigate to the main screen after successful login
           Navigator.pushReplacementNamed(context, "main_screen");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(S.of(context).Login_Successful)),  // Localized string for "Login Successful!"
+          );
         } else if (state is AuthFailure) {
+          // Show error message on login failure
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.error)),
           );

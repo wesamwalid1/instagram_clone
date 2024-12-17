@@ -13,7 +13,7 @@ class UserModel {
   int? followersCount;
   int? followingCount;
   int? postsCount;  // Add postsCount field
-  List<String>? participants;
+  List<dynamic>? participants;
 
   UserModel({
     this.uid,

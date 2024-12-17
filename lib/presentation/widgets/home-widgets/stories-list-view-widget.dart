@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,28 +18,39 @@ class CustomStoriesListView extends StatefulWidget {
 
 class _CustomStoriesListViewState extends State<CustomStoriesListView> {
   String? currentUserId;
+  StreamSubscription? _authSubscription;
 
   @override
   void initState() {
     super.initState();
+
     final String uid = FirebaseAuth.instance.currentUser!.uid;
 
     // Fetch user info to retrieve the current user's ID
     context.read<AuthCubit>().fetchUserInfo(uid);
 
-    // After fetching user info, listen to updates to get the user ID
-    context.read<AuthCubit>().stream.listen((authState) {
-      if (authState is AuthSuccess) {
+    // Safely listen to the stream
+    _authSubscription = context.read<AuthCubit>().stream.listen((authState) {
+      if (mounted && authState is AuthSuccess) {
         setState(() {
           currentUserId = authState.user.uid;
         });
-        // Fetch stories only after user info is loaded and currentUserId is set
+
         if (currentUserId != null) {
           context.read<StoryCubit>().fetchAllStories(currentUserId!);
         }
       }
     });
   }
+
+  @override
+  void dispose() {
+    // Safely cancel the subscription
+    _authSubscription?.cancel();
+    _authSubscription = null;
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +86,11 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
           // Create a set of unique users who have shared stories
           final usersWithStories = <String>{};
           for (var story in stories) {
-            if (currentUserId != story.userId) {
-              usersWithStories.add(story.userId!);
+            if (story.userId != currentUserId) {
+              usersWithStories.add(story.userId!); // Add unique user IDs to the set
             }
           }
+
           final userStories = stories.where((s) => s.userId == currentUserId).toList();
           final usersStories = stories.where((s) => s.userId != currentUserId).toList();
 
@@ -86,7 +99,7 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
             width: MediaQuery.of(context).size.width.w,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: usersWithStories.length + 1,
+              itemCount: 1 + usersWithStories.length, // Add 1 for the current user's story
               itemBuilder: (context, index) {
                 if (index == 0) {
                   // Show the current user's story with blue "Add Story" icon or long-press option
@@ -192,15 +205,20 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                     ),
                   );
                 } else {
-                  return usersStories.isNotEmpty
-                      ? GestureDetector(
+                  // Get the user ID from the usersWithStories set (we use index - 1 to skip current user's story)
+                  String userId = usersWithStories.elementAt(index - 1);
+
+                  // Find the story of the user
+                  var userStory = usersStories.firstWhere((s) => s.userId == userId);
+
+                  return GestureDetector(
                     onTap: () {
                       // Navigate to view the selected user's story
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              StoryViewScreen(stories: usersStories),
+                              StoryViewScreen(stories: [userStory]),
                         ),
                       );
                     },
@@ -218,25 +236,22 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Image.network(
-                                  stories[index].profilePhoto ?? '',
+                                  userStory.profilePhoto ?? '',
                                   fit: BoxFit.fill,
-                                  errorBuilder:
-                                      (context, error, stackTrace) {
+                                  errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                                width: 2,
-                                                color: Theme.of(context)
-                                                    .brightness ==
-                                                    Brightness.light
-                                                    ? Colors.grey
-                                                    .withOpacity(0.2)
-                                                    : Colors.grey
-                                                    .withOpacity(
-                                                    0.5))),
-                                        child:
-                                        const Icon(Icons.person_outline));
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          width: 2,
+                                          color: Theme.of(context).brightness ==
+                                              Brightness.light
+                                              ? Colors.grey.withOpacity(0.2)
+                                              : Colors.grey.withOpacity(0.5),
+                                        ),
+                                      ),
+                                      child: const Icon(Icons.person_outline),
+                                    );
                                   },
                                 ),
                               ),
@@ -244,18 +259,16 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
                           ),
                           const Spacer(),
                           Text(
-                            stories[index].username.toString(),
+                            userStory.username.toString(),
                             style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 12.sp, fontWeight: FontWeight.bold),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
                     ),
-                  )
-                      : SizedBox();
+                  );
                 }
               },
             ),
@@ -264,6 +277,7 @@ class _CustomStoriesListViewState extends State<CustomStoriesListView> {
           return const Center(child: Text('No stories to show'));
         }
       },
+
     );
   }
 }

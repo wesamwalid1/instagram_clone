@@ -61,4 +61,17 @@ final class FetchUsersError extends AuthState {
   FetchUsersError(this.error);
 }
 
+final class AuthLoginSuccess extends AuthState {
+  final User user;
+  final UserModel? userModel;
+
+  AuthLoginSuccess(this.user, {this.userModel});
+}
+
+final class AuthRegisterSuccess extends AuthState {
+  final User user;
+
+  AuthRegisterSuccess(this.user);
+}
+
 
